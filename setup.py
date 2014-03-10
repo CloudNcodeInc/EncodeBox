@@ -12,7 +12,7 @@ u"""
 
 from __future__ import absolute_import, division, print_function, unicode_literals
 
-import os, subprocess, sys
+import os, subprocess, sys, time
 from codecs import open
 from pip.req import parse_requirements
 from setuptools import setup, find_packages
@@ -68,12 +68,10 @@ def post_install():
     from pytoolbox.filesystem import from_template
     print(u'Install Debian packages')
     packages = filter(None, (p.strip() for p in open(u'requirements.apt')))
-    subprocess.check_call([u'apt-get', u'install'] + packages)
-    print(u'Register our services and set daemons user to ' + os.getlogin())
+    subprocess.check_call([u'apt-get', u'-y', u'install'] + packages)
+    print(u'Register and start our services as user ' + os.getlogin())
     from_template(u'etc/encodebox.conf.template', u'/etc/supervisor/conf.d/encodebox.conf', {u'user': os.getlogin()})
-    subprocess.call([u'service', u'supervisor', u'start'], stderr=open(os.devnull, u'wb'))
-    subprocess.check_call([u'supervisorctl', u'reread'])
-    subprocess.check_call([u'supervisorctl', u'update'])
+    subprocess.call([u'service', u'supervisor', u'force-reload'])
 
 
 call_hook(u'pre_' + action)
