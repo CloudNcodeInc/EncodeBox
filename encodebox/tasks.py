@@ -16,10 +16,10 @@ import json, sys
 from celery import Celery
 from os.path import dirname, join
 from pytoolbox.datetime import secs_to_time
-from pytoolbox.ffmpeg import encode, get_media_tracks
+from pytoolbox.ffmpeg import encode, get_media_resolution, HEIGHT
 from pytoolbox.filesystem import try_makedirs, try_remove
 from pytoolbox.encoding import configure_unicode, to_bytes
-from .lib import get_media_size, get_out_relpath, move, HEIGHT, HD_HEIGHT
+from .lib import get_out_relpath, move, HD_HEIGHT
 
 configure_unicode()
 
@@ -40,15 +40,15 @@ def transcode(settings_json, in_relpath_json):
     in_abspath = join(settings[u'inputs_directory'], in_relpath)
     outputs_abspaths = []
     try:
-        size = get_media_size(get_media_tracks(in_abspath))
-        if not size:
-            raise IOError(to_bytes(u'Unable to detect size of video "{0}"'.format(in_relpath)))
+        resolution = get_media_resolution(in_abspath)
+        if not resolution:
+            raise IOError(to_bytes(u'Unable to detect resolution of video "{0}"'.format(in_relpath)))
 
-        quality = u'hd' if size[HEIGHT] >= HD_HEIGHT else u'sd'
+        quality = u'hd' if resolution[HEIGHT] >= HD_HEIGHT else u'sd'
         transcode_passes = settings[quality + u'_transcode_passes']
         total = len(transcode_passes)
 
-        print_it(u'Media {0} {1}p {2}'.format(quality.upper(), size[HEIGHT], in_relpath))
+        print_it(u'Media {0} {1}p {2}'.format(quality.upper(), resolution[HEIGHT], in_relpath))
 
         for counter, transcode_pass in enumerate(transcode_passes, 1):
             username = u'toto'  # FIXME detect username based on input directory name (?)

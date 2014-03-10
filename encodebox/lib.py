@@ -16,19 +16,7 @@ import shutil, sys
 from os.path import basename, dirname, splitext
 from pytoolbox.filesystem import try_makedirs
 
-WIDTH, HEIGHT = range(2)
 HD_HEIGHT = 720
-
-
-def get_media_size(tracks):
-    u"""Return [width, height] of the first video track in ``tracks`` or None."""
-    try:
-        first_video_track = next(tracks[u'video'].itervalues())
-        size = [int(n) for n in first_video_track[u'size'].split(u'x')]
-        assert(len(size) == 2)
-        return size
-    except:
-        return None
 
 
 def get_out_relpath(template, username, in_relpath):

@@ -1,3 +1,3 @@
 celery
 pyinotify
-pytoolbox>=6.3.0-beta
+pytoolbox>=6.4.0-beta
