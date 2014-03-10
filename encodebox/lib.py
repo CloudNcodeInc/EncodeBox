@@ -27,7 +27,7 @@ def get_media_size(tracks):
         size = [int(n) for n in first_video_track[u'size'].split(u'x')]
         assert(len(size) == 2)
         return size
-    except (AssertionError, KeyError, ValueError):
+    except:
         return None
 
 
