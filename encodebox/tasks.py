@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 
 # Transcoding watchfolder called EncodeBox
-# Retrieved from https://bitbucket.org/cloudncode/cloudncode.git
+# Retrieved from git clone https://bitbucket.org/cloudncode/encodebox.git
 u"""
     Asynchronous tasks started by the Celery worker.
 

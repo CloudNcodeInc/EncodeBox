@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 
 # Transcoding watchfolder called EncodeBox
-# Retrieved from https://bitbucket.org/cloudncode/cloudncode.git
+# Retrieved from git clone https://bitbucket.org/cloudncode/encodebox.git
 u"""
     Install EncodeBox on the system.
 
@@ -77,7 +77,7 @@ call_hook(u'pre_' + action)
 
 setup(
     name=u'encodebox',
-    version=u'0.2.0-alpha',
+    version=u'0.2.2-alpha',
     packages=find_packages(),
     description=u'Transcoding watchfolder called EncodeBox',
     long_description=open(u'README.rst', u'r', encoding=u'utf-8').read(),
