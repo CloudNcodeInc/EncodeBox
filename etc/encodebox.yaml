@@ -1,0 +1,23 @@
+completed_directory: ~/EncodeBox/completed
+failed_directory: ~/EncodeBox/failed
+hd_transcode_passes:
+- encoder_string: -f mp4
+  out_template: '{username}.{name}.copy1.mp4'
+- encoder_string: -f mp4
+  out_template: '{username}.{name}.copy2.mp4'
+- encoder_string: -f mp4
+  out_template: '{username}.{name}.copy3.mp4'
+- encoder_string: -f mp4
+  out_template: '{username}.{name}.copy4.mp4'
+- encoder_string: -f mp4
+  out_template: '{username}.{name}.copy5.mp4'
+inputs_directory: ~/EncodeBox/uploads
+outputs_directory: ~/EncodeBox/outputs
+sd_transcode_passes:
+- encoder_string: -f mp4
+  out_template: '{username}.{name}.copy1.mp4'
+- encoder_string: -f mp4
+  out_template: '{username}.{name}.copy2.mp4'
+- encoder_string: -f mp4
+  out_template: '{username}.{name}.copy3.mp4'
+temporary_directory: ~/EncodeBox/temporary

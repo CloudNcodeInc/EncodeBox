@@ -77,7 +77,7 @@ call_hook(u'pre_' + action)
 
 setup(
     name=u'encodebox',
-    version=u'0.1.0-alpha',
+    version=u'0.2.0-alpha',
     packages=find_packages(),
     description=u'Transcoding watchfolder called EncodeBox',
     long_description=open(u'README.rst', u'r', encoding=u'utf-8').read(),
@@ -89,7 +89,10 @@ setup(
     keywords=[u'ffmpeg', u'json', u'rsync'],
     include_package_data=True,
     install_requires=[str(requirement.req) for requirement in parse_requirements(u'requirements.txt')],
-    data_files=[(u'/etc/supervisor/conf.d', [u'etc/encodebox.conf'])],
+    data_files=[
+        (u'/etc', [u'etc/encodebox.yaml']),
+        (u'/etc/supervisor/conf.d', [u'etc/encodebox.conf'])
+    ],
     entry_points={u'console_scripts': [u'encodebox=encodebox.daemon:main']},
     **kwargs
 )
