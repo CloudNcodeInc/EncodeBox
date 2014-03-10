@@ -12,7 +12,7 @@ u"""
 
 from __future__ import absolute_import, division, print_function, unicode_literals
 
-import os, subprocess, sys
+import os, subprocess, stat, sys, zipfile
 from codecs import open
 from pip.req import parse_requirements
 from setuptools import setup, find_packages
@@ -65,12 +65,21 @@ def pre_install():
 
 
 def post_install():
-    from pytoolbox.filesystem import from_template
+    from pytoolbox.filesystem import from_template, try_remove
+    from pytoolbox.network.http import download
     print(u'Install Debian packages')
     packages = filter(None, (p.strip() for p in open(u'requirements.apt')))
     subprocess.check_call([u'apt-get', u'-y', u'install'] + packages)
+    print(u'Download and install Nero AAC encoder')
+    try:
+        download(u'ftp://ftp6.nero.com/tools/NeroDigitalAudio.zip', u'/tmp/nero.zip')
+        zipfile.ZipFile(u'/tmp/nero.zip').extract(u'linux/neroAacEnc', u'/usr/local/bin')
+        os.chmod(u'/usr/local/bin/neroAacEnc', os.stat(u'/usr/local/bin/neroAacEnc').st_mode | stat.S_IEXEC)
+    finally:
+        try_remove(u'/tmp/nero.zip')
     print(u'Register and start our services as user ' + os.getlogin())
-    from_template(u'etc/encodebox.conf.template', u'/etc/supervisor/conf.d/encodebox.conf', {u'user': os.getlogin()})
+    from_template(u'etc/encodebox.conf.template', u'/etc/supervisor/conf.d/encodebox.conf',
+                  {u'user': os.getlogin()})
     subprocess.call([u'service', u'supervisor', u'force-reload'])
 
 
