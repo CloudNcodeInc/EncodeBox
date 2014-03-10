@@ -12,7 +12,7 @@ u"""
 
 from __future__ import absolute_import, division, print_function, unicode_literals
 
-import sys
+import json, sys
 from celery import Celery
 from os.path import dirname, join
 from pytoolbox.datetime import secs_to_time
@@ -24,15 +24,19 @@ from .lib import get_media_size, get_out_relpath, move, HEIGHT, HD_HEIGHT
 configure_unicode()
 
 app = Celery(u'tasks', broker=u'amqp://guest@localhost//')
+app.conf.CELERY_ACCEPT_CONTENT = [u'json']
+app.conf.CELERY_TASK_SERIALIZER = u'json'
 
 
 @app.task(name=u'encodebox.tasks.transcode')
-def transcode(settings, in_relpath):
+def transcode(settings_json, in_relpath_json):
     u"""Convert an input media file to 3 (SD) or 5 (HD) output files."""
 
     def print_it(message, **kwargs):
         print(u'{0} {1}'.format(transcode.request.id, message), **kwargs)
 
+    settings = json.loads(settings_json)
+    in_relpath = json.loads(in_relpath_json)
     in_abspath = join(settings[u'inputs_directory'], in_relpath)
     outputs_abspaths = []
     try:
