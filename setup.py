@@ -69,6 +69,7 @@ def post_install():
     packages = filter(None, (p.strip() for p in open(u'requirements.apt')))
     subprocess.check_call([u'apt-get', u'install'] + packages)
     print(u"Register EncodeBox's services")
+    subprocess.call([u'service', u'supervisor', u'start'], stderr=open(os.devnull, u'wb'))
     subprocess.check_call([u'supervisorctl', u'reread'])
     subprocess.check_call([u'supervisorctl', u'update'])
 
