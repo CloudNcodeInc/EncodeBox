@@ -40,11 +40,13 @@ template_steps = (
     u'ffmpeg -i "{tmp}v.h264" -vcodec copy -y "{out}{name}_400.mp4"',
 )
 
+task_id = unicode(uuid.uuid4())  # This simulate the task ID of a celery task
+
 options = {
     u'name': os.path.splitext(os.path.basename(sys.argv[1]))[0],
     u'input': sys.argv[1],
-    u'out': u'outputs' + os.sep,
-    u'tmp': u'temporary' + os.sep + unicode(uuid.uuid4()) + os.sep
+    u'out': u'outputs' + os.sep + task_id + os.sep,   # The outputs directory
+    u'tmp': u'temporary' + os.sep + task_id + os.sep  # The temporary directory
 }
 
 try:
