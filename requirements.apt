@@ -1,2 +1,9 @@
+ffmpeg
+libyaml-dev
+libxml2-dev
+libxslt-dev
+libz-dev
+python-dev
+python-pip
 rabbitmq-server
 supervisor

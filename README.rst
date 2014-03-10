@@ -26,11 +26,10 @@ I do my best to follow this interesting recommendation : `Semantic Versioning 2.
 How to install it ?
 -------------------
 
-Install some packages that are not handled by pip::
+Add the following PPA if you want to install the **real** ffmpeg::
 
     sudo apt-add-repository ppa:jon-severinsson/ffmpeg
     sudo apt-get update
-    sudo apt-get install ffmpeg libyaml-dev libxml2-dev libxslt-dev libz-dev python-dev python-pip supervisor
 
 Make sure that pip is up-to-date (PIPception)::
 
