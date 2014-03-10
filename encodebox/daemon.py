@@ -14,7 +14,7 @@ from __future__ import absolute_import, division, print_function, unicode_litera
 
 import json, os, pyinotify, sys, yaml
 from codecs import open
-from os.path import abspath, expanduser, isfile, join
+from os.path import abspath, expanduser
 from pytoolbox.filesystem import first_that_exist, try_makedirs
 from .lib import stdout_it, stderr_it
 from .tasks import transcode
@@ -53,6 +53,7 @@ class InputsHandler(pyinotify.ProcessEvent):
         transcode.delay(json.dumps(self.settings), json.dumps(in_relpath))
 
     # def garbage():
+    #     from os.path import abspath, expanduser, isfile, join
     #     stdout.write(u'Already running for {0:0.1f} seconds\n'.format(time.time() - start_time))
     #     # FIXME use pyinotify instead of recursively scanning (?)
     #     # FIXME verify if a task is already launched for the file in_relpath
