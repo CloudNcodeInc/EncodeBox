@@ -21,7 +21,6 @@ from .tasks import transcode
 
 
 def main():
-    global settings
     try:
         settings_filename = first_that_exist(u'/etc/encodebox.yaml', u'etc/encodebox.yaml')
         stdout_it(u'Read settings from ' + settings_filename)
@@ -47,10 +46,14 @@ def main():
 class InputsHandler(pyinotify.ProcessEvent):
 
     def process_IN_CLOSE_WRITE(self, event):
-        u"""Launch a new transcoding task for the updated input media file."""
-        in_relpath = event.pathname.replace(self.settings[u'inputs_directory'] + os.sep, u'')
-        stdout_it(u'Launch a new transcode task for file "{0}"\n'.format(in_relpath))
-        transcode.delay(json.dumps(self.settings), json.dumps(in_relpath))
+        try:
+            u"""Launch a new transcoding task for the updated input media file."""
+            in_relpath = event.pathname.replace(self.settings[u'inputs_directory'] + os.sep, u'')
+            stdout_it(u'Launch a new transcode task for file "{0}"\n'.format(in_relpath))
+            transcode.delay(json.dumps(self.settings), json.dumps(in_relpath))
+        except Exception as e:
+            stderr_it(unicode(e))
+            raise
 
     # def garbage():
     #     from os.path import abspath, expanduser, isfile, join

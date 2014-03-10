@@ -12,7 +12,7 @@ u"""
 
 from __future__ import absolute_import, division, print_function, unicode_literals
 
-import os, subprocess, sys, time
+import os, subprocess, sys
 from codecs import open
 from pip.req import parse_requirements
 from setuptools import setup, find_packages
@@ -78,7 +78,7 @@ call_hook(u'pre_' + action)
 
 setup(
     name=u'encodebox',
-    version=u'0.2.3-alpha',
+    version=u'0.3.0-alpha',
     packages=find_packages(),
     description=u'Transcoding watchfolder called EncodeBox',
     long_description=open(u'README.rst', u'r', encoding=u'utf-8').read(),
