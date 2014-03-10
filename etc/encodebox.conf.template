@@ -6,7 +6,7 @@ stdout_logfile_backups = 5
 stderr_logfile = /var/log/encodebox-stderr.log
 stderr_logfile_maxbytes = 10MB
 stderr_logfile_backups = 5
-user = david
+user = {user}
 autostart = true
 autorestart = true
 
@@ -18,6 +18,6 @@ stdout_logfile_backups = 5
 stderr_logfile = /var/log/encodebox-worker-stderr.log
 stderr_logfile_maxbytes = 10MB
 stderr_logfile_backups = 5
-user = david
+user = {user}
 autostart = true
 autorestart = true

@@ -65,10 +65,12 @@ def pre_install():
 
 
 def post_install():
+    from pytoolbox.filesystem import from_template
     print(u'Install Debian packages')
     packages = filter(None, (p.strip() for p in open(u'requirements.apt')))
     subprocess.check_call([u'apt-get', u'install'] + packages)
-    print(u"Register EncodeBox's services")
+    print(u'Register our services and set daemons user to ' + os.getlogin())
+    from_template(u'etc/encodebox.conf.template', u'/etc/supervisor/conf.d/encodebox.conf', {u'user': os.getlogin()})
     subprocess.call([u'service', u'supervisor', u'start'], stderr=open(os.devnull, u'wb'))
     subprocess.check_call([u'supervisorctl', u'reread'])
     subprocess.check_call([u'supervisorctl', u'update'])
@@ -90,10 +92,7 @@ setup(
     keywords=[u'ffmpeg', u'json', u'rsync'],
     include_package_data=True,
     install_requires=[str(requirement.req) for requirement in parse_requirements(u'requirements.txt')],
-    data_files=[
-        (u'/etc', [u'etc/encodebox.yaml']),
-        (u'/etc/supervisor/conf.d', [u'etc/encodebox.conf'])
-    ],
+    data_files=[(u'/etc', [u'etc/encodebox.yaml'])],
     entry_points={u'console_scripts': [u'encodebox=encodebox.daemon:main']},
     **kwargs
 )
