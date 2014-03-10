@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 
 # Transcoding watchfolder called EncodeBox
-# This file is part of EncodeBox Project, retrieved from <TODO address of the repository>
+# Retrieved from https://bitbucket.org/cloudncode/cloudncode.git
 u"""
     Daemon of the EncodeBox launching a new transcoding task for every media asset detected in the input directory.
 
