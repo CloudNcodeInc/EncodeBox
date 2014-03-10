@@ -28,7 +28,7 @@ def main():
             settings = yaml.load(f)
         stdout_it(u'Create the watch-folder directories')
         for key, value in settings.iteritems():
-            if u'directory' in key:
+            if u'directory' in key and not u'remote' in key:
                 settings[key] = directory = abspath(expanduser(value))
                 try_makedirs(directory)
         manager = pyinotify.WatchManager()

@@ -21,3 +21,4 @@ sd_transcode_passes:
 - encoder_string: -f mp4
   out_template: '{username}.{name}.copy3.mp4'
 temporary_directory: ~/EncodeBox/temporary
+completed_remote_directory: ubuntu@127.0.0.1:medias/
