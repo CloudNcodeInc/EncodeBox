@@ -16,7 +16,7 @@ import os, time, yaml
 from codecs import open
 from os.path import abspath, expanduser, isfile, join
 from pytoolbox.filesystem import first_that_exist, try_makedirs
-from sys import exit, stderr, stdout
+from .lib import stdout_it, stderr_it
 from .tasks import transcode
 
 
@@ -24,12 +24,10 @@ def main():
     try:
         start_time = time.time()
         settings_filename = first_that_exist(u'/etc/encodebox.yaml', u'etc/encodebox.yaml')
-        stdout.write(u'Read settings from {0}\n'.format(settings_filename))
-        stdout.flush()
+        stdout_it(u'Read settings from ' + settings_filename)
         with open(settings_filename, u'r', u'utf-8') as f:
             settings = yaml.load(f)
-        stdout.write(u'Create the watch-folder directories\n')
-        stdout.flush()
+        stdout_it(u'Create the watch-folder directories')
         for key, value in settings.iteritems():
             if u'directory' in key:
                 settings[key] = directory = abspath(expanduser(value))

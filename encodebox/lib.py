@@ -12,19 +12,12 @@ u"""
 
 from __future__ import absolute_import, division, print_function, unicode_literals
 
-import shutil
+import shutil, sys
 from os.path import basename, dirname, splitext
 from pytoolbox.filesystem import try_makedirs
 
 WIDTH, HEIGHT = range(2)
 HD_HEIGHT = 720
-
-
-# def create_directories(settings):
-#     u"""Create the directories retrieved from settings."""
-#     for name, value in settings.iteritems():
-#         if u'directory' in name:
-#             try_makedirs(value)
 
 
 def get_media_size(tracks):
@@ -52,3 +45,15 @@ def move(source, destination):
 def sanitize_filename(filename):
     # FIXME implement a better filename sanitizer
     return filename.replace(u'&', u'').replace(u'[', u'').replace(u']', u'').replace(u' ', u'_')
+
+
+def stderr_it(msg, end=u'\n', flush=True):
+    sys.stdout.write(u'[ERROR] ' + msg + end)
+    if flush:
+        sys.stdout.flush()
+
+
+def stdout_it(msg, end=u'\n', flush=True):
+    sys.stdout.write(msg + end)
+    if flush:
+        sys.stdout.flush()
