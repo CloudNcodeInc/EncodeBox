@@ -62,7 +62,7 @@ def transcode(settings_json, in_relpath_json):
         print_it(u'Generate transcoding passes from templated transcoding passes')
         transcode_passes = passes_from_template(
             template_transcode_passes, input=in_abspath, name=sanitize_filename(splitext(basename(in_relpath))[0]),
-            out=task_outputs_directory + os.sep, tmp=task_outputs_directory + os.sep)
+            out=task_outputs_directory + os.sep, tmp=task_temporary_directory + os.sep)
         total = len(template_transcode_passes)
 
         print_it(u'Execute transcoding passes')
