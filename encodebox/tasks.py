@@ -88,8 +88,8 @@ def transcode(settings_json, in_relpath_json):
 
         print_it(u'Move the input file to the completed directory and send outputs to the remote host')
         move(in_abspath, join(settings[u'completed_directory'], in_relpath))
-        rsync(source=task_outputs_directory, desination=join(settings[u'completed_remote_directory'], task_id),
-              source_is_dir=True, destination_is_dir=True, archive=True, progress=True, recursive=True, extra=u'e ssh')
+        #rsync(source=task_outputs_directory, desination=join(settings[u'completed_remote_directory'], task_id),
+        #      source_is_dir=True, destination_is_dir=True, archive=True, progress=True, recursive=True, extra=u'e ssh')
         # FIXME #4 POST success report to remote API [1]
     except Exception as e:
         print_it(u'[ERROR] Something went wrong, reason: {0}'.format(repr(e)), file=sys.stderr)
