@@ -1,24 +1,114 @@
-completed_directory: ~/EncodeBox/completed
-failed_directory: ~/EncodeBox/failed
-hd_transcode_passes:
-- encoder_string: -f mp4
-  out_template: '{username}.{name}.copy1.mp4'
-- encoder_string: -f mp4
-  out_template: '{username}.{name}.copy2.mp4'
-- encoder_string: -f mp4
-  out_template: '{username}.{name}.copy3.mp4'
-- encoder_string: -f mp4
-  out_template: '{username}.{name}.copy4.mp4'
-- encoder_string: -f mp4
-  out_template: '{username}.{name}.copy5.mp4'
 inputs_directory: ~/EncodeBox/inputs
 outputs_directory: ~/EncodeBox/outputs
-sd_transcode_passes:
-- encoder_string: -f mp4
-  out_template: '{username}.{name}.copy1.mp4'
-- encoder_string: -f mp4
-  out_template: '{username}.{name}.copy2.mp4'
-- encoder_string: -f mp4
-  out_template: '{username}.{name}.copy3.mp4'
 temporary_directory: ~/EncodeBox/temporary
+failed_directory: ~/EncodeBox/failed
+completed_directory: ~/EncodeBox/completed
 completed_remote_directory: ubuntu@127.0.0.1:medias/
+hd_transcode_passes:
+- - ffmpeg
+  - '{input}'
+  - '{tmp}a.wav'
+  - '-analyzeduration 2147480000 -ar 48000 -ac 2'
+- 'neroAacEnc -cbr 128000 -lc -if "{tmp}a.wav" -of "{tmp}a.mp4"'
+- - ffmpeg
+  - '{input}'
+  - '{tmp}v.y4m'
+  - '-r 25 -s 854x480 -aspect 16:9 -f yuv4mpegpipe -pix_fmt yuv420p -vsync 1 -g 100 -keyint_min 100 -movflags frag_keyframe'
+- - x264
+  - '{tmp}v.y4m'
+  - null
+  - '--pass 1 --fps 25 --bitrate 2000 --no-scenecut --stats "{tmp}x264pass.log"'
+- - x264
+  - '{tmp}v.y4m'
+  - '{tmp}v.h264'
+  - '--pass 2 --fps 25 --bitrate 2000 --no-scenecut --stats "{tmp}x264pass.log"'
+- - ffmpeg
+  - ['{tmp}v.h264', '{tmp}a.mp4']
+  - '{out}{name}_2000.mp4'
+  - '-vcodec copy -acodec copy'
+- - ffmpeg
+  - '{input}'
+  - '{tmp}v.y4m'
+  - '-r 25 -s 480x272 -aspect 16:9 -f yuv4mpegpipe -pix_fmt yuv420p -vsync 1 -g 100 -keyint_min 100 -movflags frag_keyframe'
+- - x264
+  - '{tmp}v.y4m'
+  - null
+  - '--pass 1 --fps 25 --bitrate 894 --no-scenecut --stats "{tmp}x264pass.log"'
+- - x264
+  - '{tmp}v.y4m'
+  - '{tmp}v.h264'
+  - '--pass 2 --fps 25 --bitrate 894 --no-scenecut --stats "{tmp}x264pass.log"'
+- - ffmpeg
+  - '{tmp}v.h264'
+  - '{out}{name}_894.mp4'
+  - -vcodec copy
+- - ffmpeg
+  - '{input}'
+  - '{tmp}v.y4m'
+  - '-r 25 -s 288x160 -aspect 16:9 -f yuv4mpegpipe -pix_fmt yuv420p -vsync 1 -g 100 -keyint_min 100 -movflags frag_keyframe'
+- - x264
+  - '{tmp}v.y4m'
+  - null
+  - '--pass 1 --fps 25 --bitrate 400 --no-scenecut --stats "{tmp}x264pass.log"'
+- - x264
+  - '{tmp}v.y4m'
+  - '{tmp}v.h264'
+  - '--pass 2 --fps 25 --bitrate 400 --no-scenecut --stats "{tmp}x264pass.log"'
+- - ffmpeg
+  - '{tmp}v.h264'
+  - '{out}{name}_400.mp4'
+  - '-vcodec copy'
+sd_transcode_passes:
+- - ffmpeg
+  - '{input}'
+  - '{tmp}a.wav'
+  - '-analyzeduration 2147480000 -ar 48000 -ac 2'
+- 'neroAacEnc -cbr 128000 -lc -if "{tmp}a.wav" -of "{tmp}a.mp4"'
+- - ffmpeg
+  - '{input}'
+  - '{tmp}v.y4m'
+  - '-r 25 -s 854x480 -aspect 16:9 -f yuv4mpegpipe -pix_fmt yuv420p -vsync 1 -g 100 -keyint_min 100 -movflags frag_keyframe'
+- - x264
+  - '{tmp}v.y4m'
+  - null
+  - '--pass 1 --fps 25 --bitrate 2000 --no-scenecut --stats "{tmp}x264pass.log"'
+- - x264
+  - '{tmp}v.y4m'
+  - '{tmp}v.h264'
+  - '--pass 2 --fps 25 --bitrate 2000 --no-scenecut --stats "{tmp}x264pass.log"'
+- - ffmpeg
+  - ['{tmp}v.h264', '{tmp}a.mp4']
+  - '{out}{name}_2000.mp4'
+  - '-vcodec copy -acodec copy'
+- - ffmpeg
+  - '{input}'
+  - '{tmp}v.y4m'
+  - '-r 25 -s 480x272 -aspect 16:9 -f yuv4mpegpipe -pix_fmt yuv420p -vsync 1 -g 100 -keyint_min 100 -movflags frag_keyframe'
+- - x264
+  - '{tmp}v.y4m'
+  - null
+  - '--pass 1 --fps 25 --bitrate 894 --no-scenecut --stats "{tmp}x264pass.log"'
+- - x264
+  - '{tmp}v.y4m'
+  - '{tmp}v.h264'
+  - '--pass 2 --fps 25 --bitrate 894 --no-scenecut --stats "{tmp}x264pass.log"'
+- - ffmpeg
+  - '{tmp}v.h264'
+  - '{out}{name}_894.mp4'
+  - -vcodec copy
+- - ffmpeg
+  - '{input}'
+  - '{tmp}v.y4m'
+  - '-r 25 -s 288x160 -aspect 16:9 -f yuv4mpegpipe -pix_fmt yuv420p -vsync 1 -g 100 -keyint_min 100 -movflags frag_keyframe'
+- - x264
+  - '{tmp}v.y4m'
+  - null
+  - '--pass 1 --fps 25 --bitrate 400 --no-scenecut --stats "{tmp}x264pass.log"'
+- - x264
+  - '{tmp}v.y4m'
+  - '{tmp}v.h264'
+  - '--pass 2 --fps 25 --bitrate 400 --no-scenecut --stats "{tmp}x264pass.log"'
+- - ffmpeg
+  - '{tmp}v.h264'
+  - '{out}{name}_400.mp4'
+  - '-vcodec copy'

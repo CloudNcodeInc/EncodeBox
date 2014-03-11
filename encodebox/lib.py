@@ -12,22 +12,35 @@ u"""
 
 from __future__ import absolute_import, division, print_function, unicode_literals
 
-import shutil, sys
-from os.path import basename, dirname, splitext
+import shlex, shutil, sys
+from os.path import dirname
+from pytoolbox.encoding import string_types
 from pytoolbox.filesystem import try_makedirs
 
 HD_HEIGHT = 720
 
 
-def get_out_relpath(template, username, in_relpath):
-    name, extension = splitext(basename(in_relpath))
-    name = sanitize_filename(name).lower()
-    return template.format(username=username, name=name, extension=extension)
-
-
 def move(source, destination):
     try_makedirs(dirname(destination))
     shutil.move(source, destination)
+
+
+def passes_from_template(template_passes, **kwargs):
+    passes = []
+    for template_pass in template_passes:
+        if isinstance(template_pass, string_types):
+            passes.append(shlex.split(template_pass.format(**kwargs)))
+        else:
+            the_pass = []
+            for value in template_pass:
+                if value is None:
+                    the_pass.append(value)
+                elif isinstance(value, string_types):
+                    the_pass.append(value.format(**kwargs))
+                else:
+                    the_pass.append([x.format(**kwargs) for x in value])
+            passes.append(the_pass)
+    return passes
 
 
 def sanitize_filename(filename):
