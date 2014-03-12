@@ -38,7 +38,10 @@ def transcode(in_relpath_json):
     def print_it(message, **kwargs):
         print(u'{0} {1}'.format(transcode.request.id, message), **kwargs)
 
-    in_abspath, in_relpath = task_temporary_directory = task_outputs_directory = None
+    in_abspath = None
+    in_relpath = None
+    task_temporary_directory = None
+    task_outputs_directory = None
     try:
         settings, _ = load_settings()
         in_relpath = json.loads(in_relpath_json)
