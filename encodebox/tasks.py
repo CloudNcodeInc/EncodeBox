@@ -12,7 +12,7 @@ u"""
 
 from __future__ import absolute_import, division, print_function, unicode_literals
 
-import json, os, shutil, sys
+import json, shutil, sys
 from celery import Celery
 from os.path import basename, join, splitext
 from pytoolbox import ffmpeg, x264  # For the line with encoder_module to work!
@@ -60,9 +60,9 @@ def transcode(settings_json, in_relpath_json):
         try_makedirs(task_outputs_directory)
 
         print_it(u'Generate transcoding passes from templated transcoding passes')
-        transcode_passes = passes_from_template(
-            template_transcode_passes, input=in_abspath, name=sanitize_filename(splitext(basename(in_relpath))[0]),
-            out=task_outputs_directory + os.sep, tmp=task_temporary_directory + os.sep)
+        transcode_passes = passes_from_template(template_transcode_passes, input=in_abspath,
+                                                name=sanitize_filename(splitext(basename(in_relpath))[0]),
+                                                out=task_outputs_directory, tmp=task_temporary_directory)
         total = len(template_transcode_passes)
 
         print_it(u'Execute transcoding passes')
