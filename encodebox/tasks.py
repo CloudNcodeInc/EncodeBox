@@ -12,39 +12,44 @@ u"""
 
 from __future__ import absolute_import, division, print_function, unicode_literals
 
-import json, shutil, sys
+import json, os, shutil, sys, time
 from celery import Celery
-from os.path import basename, join, splitext
+from os.path import basename, exists, join, splitext
 from pytoolbox import ffmpeg, x264  # For the line with encoder_module to work!
 from pytoolbox.datetime import secs_to_time
 from pytoolbox.encoding import configure_unicode, to_bytes
 from pytoolbox.ffmpeg import get_media_resolution, HEIGHT
 from pytoolbox.filesystem import try_makedirs
-from pytoolbox.subprocess import rsync
 from subprocess import check_call
-from .lib import move, passes_from_template, sanitize_filename, HD_HEIGHT
+
+from . import celeryconfig
+from .lib import load_settings, move, passes_from_template, sanitize_filename, HD_HEIGHT
 
 configure_unicode()
 
-app = Celery(u'tasks', broker=u'amqp://guest@localhost//')
-app.conf.CELERY_ACCEPT_CONTENT = [u'json']
-app.conf.CELERY_TASK_SERIALIZER = u'json'
+app = Celery(u'tasks')
+app.config_from_object(celeryconfig)
 
 
 @app.task(name=u'encodebox.tasks.transcode')
-def transcode(settings_json, in_relpath_json):
+def transcode(in_relpath_json):
     u"""Convert an input media file to 3 (SD) or 5 (HD) output files."""
 
     def print_it(message, **kwargs):
         print(u'{0} {1}'.format(transcode.request.id, message), **kwargs)
 
-    settings = json.loads(settings_json)
-    in_relpath = json.loads(in_relpath_json)
-    in_abspath = join(settings[u'inputs_directory'], in_relpath)
-    task_id = transcode.request.id
-    task_temporary_directory = join(settings[u'temporary_directory'], task_id)
-    task_outputs_directory = join(settings[u'outputs_directory'], task_id)
+    in_abspath, in_relpath = task_temporary_directory = task_outputs_directory = None
     try:
+        settings, _ = load_settings()
+        in_relpath = json.loads(in_relpath_json)
+        in_abspath = join(settings[u'inputs_directory'], in_relpath)
+
+        print_it(u'Create outputs directories')
+        task_temporary_directory = join(settings[u'temporary_directory'], transcode.request.id)
+        task_outputs_directory = join(settings[u'outputs_directory'], transcode.request.id)
+        try_makedirs(task_temporary_directory)
+        try_makedirs(task_outputs_directory)
+
         resolution = get_media_resolution(in_abspath)
         if not resolution:
             raise IOError(to_bytes(u'Unable to detect resolution of video "{0}"'.format(in_relpath)))
@@ -54,10 +59,6 @@ def transcode(settings_json, in_relpath_json):
         total = len(template_transcode_passes)
 
         print_it(u'Media {0} {1}p {2}'.format(quality.upper(), resolution[HEIGHT], in_relpath))
-
-        print_it(u'Create outputs directories')
-        try_makedirs(task_temporary_directory)
-        try_makedirs(task_outputs_directory)
 
         print_it(u'Generate transcoding passes from templated transcoding passes')
         transcode_passes = passes_from_template(template_transcode_passes, input=in_abspath,
@@ -95,13 +96,37 @@ def transcode(settings_json, in_relpath_json):
         print_it(u'[ERROR] Something went wrong, reason: {0}'.format(repr(e)), file=sys.stderr)
         # Move the input file to the failed directory and POST the error report to remote API
         # FIXME #4 POST error report to remote API [1]
-        move(in_abspath, join(settings[u'failed_directory'], in_relpath))
+        if in_abspath and in_relpath:
+            move(in_abspath, join(settings[u'failed_directory'], in_relpath))
         # Cleanup all outputs and re-raise the exception
         print_it(u'Remove the output files')
-        shutil.rmtree(task_outputs_directory)
+        if task_outputs_directory and exists(task_outputs_directory):
+            shutil.rmtree(task_outputs_directory)
         raise
     finally:
         print_it(u'Remove the temporary files')
-        shutil.rmtree(task_temporary_directory)
+        if task_temporary_directory and exists(task_temporary_directory):
+            shutil.rmtree(task_temporary_directory)
 
 # [1]: See TODO list for a potentially better way to send the reports
+
+
+@app.task(name=u'encodebox.tasks.cleanup')
+def cleanup():
+
+    def print_it(message, **kwargs):
+        print(u'{0} {1}'.format(cleanup.request.id, message), **kwargs)
+
+    try:
+        settings, _ = load_settings()
+        delay = settings[u'completed_cleanup_delay']
+        max_mtime = time.time() - delay
+        for root, dirnames, filenames in os.walk(settings[u'completed_directory']):
+            for filename in filenames:
+                filename = join(root, filename)
+                if os.stat(filename).st_mtime < max_mtime:
+                    print_it(u'Remove file older than {0} {1}'.format(secs_to_time(delay), filename))
+                    os.remove(filename)
+    except Exception as e:
+        print_it(u'[ERROR] Something went wrong, reason: {0}'.format(repr(e)), file=sys.stderr)
+        raise

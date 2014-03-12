@@ -12,12 +12,25 @@ u"""
 
 from __future__ import absolute_import, division, print_function, unicode_literals
 
-import shlex, shutil, sys
-from os.path import dirname
+import shlex, shutil, sys, yaml
+from codecs import open
+from os.path import abspath, dirname, expanduser
 from pytoolbox.encoding import string_types
-from pytoolbox.filesystem import try_makedirs
+from pytoolbox.filesystem import first_that_exist, try_makedirs
 
 HD_HEIGHT = 720
+
+
+def load_settings(create_directories=False):
+    filename = first_that_exist(u'/etc/encodebox.yaml', u'etc/encodebox.yaml')
+    with open(filename, u'r', u'utf-8') as f:
+        settings = yaml.load(f)
+    for key, value in settings.iteritems():
+        if u'directory' in key and not u'remote' in key:
+            settings[key] = abspath(expanduser(value))
+            if create_directories:
+                try_makedirs(settings[key])
+    return settings, filename
 
 
 def move(source, destination):

@@ -40,6 +40,7 @@ The settings file ``/etc/encodebox.yaml`` of EncodeBox permit to configure the f
 :failed_directory: (~/EncodeBox/failed) The input files are moved there if the transcoding task failed.
 :completed_directory: (~/EncodeBox/completed) The input files are moved there if the transcoding task succeeded.
 :completed_remote_directory: (ubuntu@127.0.0.1:medias/) This option is not yet used (issue #2)
+:completed_cleanup_delay: (604800) Completed files are removed if older than this delay in seconds, default means 7 days.
 :hd_transcode_passes: (a long list) The worker_ follows this list of passes (calls to encoders) to transcode the HD content.
 :sd_transcode_passes: (a long list) The worker_ follows this list of passes (calls to encoders) to transcode the SD content.
 
@@ -62,15 +63,14 @@ The "core" available features are:
     * Remove the temporary files
     * Remove the output files in case of error
     * Update the status of the task_ to *SUCCESS* or *FAILURE* + console output of the encoder
+* The periodic cleanup task_ remove completed files older than 7 days
 
 The "core" missing features are:
 
-* The cleanup task_ to remove files older than 7 days (issue #1)
 * The transcoding worker_ does not :
    * POST_ to the API_, needs workflow design + tests (issue #12 + #4)
    * Copy the output files to the remote streaming server, needs workflow design + tests (issue #2)
 * The watch-folder does not revoke_/relaunch tasks_ if the input files are removed or updated during transcoding (issue #13)
-* The settings file does not include the options for Celery_ like concurrency_ (# of parallel worker_ processes), ... (issue #14)
 * The setup script does not configure RabbitMQ_ with a password (issue #9)
 
 ------------------------------------
@@ -96,6 +96,14 @@ Then, you only need to run ``setup.py``::
 
     python setup.py test
     sudo python setup.py install
+
+---------------------
+How to configure it ?
+---------------------
+
+* The main configuration file is ``/etc/encodebox.yaml``.
+* The workers_ configuration file is ``celeryconfig.py``.
+* The services are registered in ``/etc/supervisor/encodebox.conf``.
 
 ---------------
 How to use it ?

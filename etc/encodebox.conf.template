@@ -21,3 +21,15 @@ stderr_logfile_backups = 5
 user = {user}
 autostart = true
 autorestart = true
+
+[program:encodebox_periodic]
+command = celery -A encodebox.tasks beat -s {lib_directory}/periodic.schedule --pidfile={lib_directory}/periodic.pid
+stdout_logfile = /var/log/encodebox-periodic-stdout.log
+stdout_logfile_maxbytes = 10MB
+stdout_logfile_backups = 5
+stderr_logfile = /var/log/encodebox-periodic-stderr.log
+stderr_logfile_maxbytes = 10MB
+stderr_logfile_backups = 5
+user = {user}
+autostart = true
+autorestart = true

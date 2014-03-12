@@ -12,25 +12,15 @@ u"""
 
 from __future__ import absolute_import, division, print_function, unicode_literals
 
-import json, os, pyinotify, sys, yaml
-from codecs import open
-from os.path import abspath, expanduser
-from pytoolbox.filesystem import first_that_exist, try_makedirs
-from .lib import stdout_it, stderr_it
+import json, os, pyinotify, sys
+from .lib import load_settings, stdout_it, stderr_it
 from .tasks import transcode
 
 
 def main():
     try:
-        settings_filename = first_that_exist(u'/etc/encodebox.yaml', u'etc/encodebox.yaml')
-        stdout_it(u'Read settings from ' + settings_filename)
-        with open(settings_filename, u'r', u'utf-8') as f:
-            settings = yaml.load(f)
-        stdout_it(u'Create the watch-folder directories')
-        for key, value in settings.iteritems():
-            if u'directory' in key and not u'remote' in key:
-                settings[key] = directory = abspath(expanduser(value))
-                try_makedirs(directory)
+        stdout_it(u'Read settings and create watch-folder directories')
+        settings, _ = load_settings(create_directories=True)
         manager = pyinotify.WatchManager()
         manager.add_watch(settings[u'inputs_directory'], pyinotify.IN_CLOSE_WRITE, rec=True)
         handler = InputsHandler()
@@ -50,7 +40,7 @@ class InputsHandler(pyinotify.ProcessEvent):
             u"""Launch a new transcoding task for the updated input media file."""
             in_relpath = event.pathname.replace(self.settings[u'inputs_directory'] + os.sep, u'')
             stdout_it(u'Launch a new transcode task for file "{0}"\n'.format(in_relpath))
-            transcode.delay(json.dumps(self.settings), json.dumps(in_relpath))
+            transcode.delay(json.dumps(in_relpath))
         except Exception as e:
             stderr_it(unicode(e))
             raise
