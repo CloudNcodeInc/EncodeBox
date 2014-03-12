@@ -19,10 +19,14 @@ from pytoolbox.encoding import string_types, to_bytes
 from pytoolbox.filesystem import first_that_exist, try_makedirs
 
 HD_HEIGHT = 720
+LIB_DIRECTORY = u'/var/encodebox'
+SETTINGS_FILENAMES = (u'/etc/encodebox.yaml', u'etc/encodebox.yaml')
 
 
 def load_settings(create_directories=False):
-    filename = first_that_exist(u'/etc/encodebox.yaml', u'etc/encodebox.yaml')
+    filename = first_that_exist(*SETTINGS_FILENAMES)
+    if not filename:
+        raise IOError(to_bytes(u'Unable to find any settings file.'))
     with open(filename, u'r', u'utf-8') as f:
         settings = yaml.load(f)
     for key, value in settings.iteritems():

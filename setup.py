@@ -66,7 +66,7 @@ def pre_install():
 
 def post_install():
     import pwd
-    from encodebox import celeryconfig
+    from encodebox import lib
     from pytoolbox.filesystem import chown, from_template, try_makedirs, try_remove
     from pytoolbox.network.http import download
     user_name = os.getlogin()
@@ -81,11 +81,11 @@ def post_install():
     finally:
         try_remove(u'/tmp/nero.zip')
     print(u'Create directory for storing persistent data')
-    try_makedirs(celeryconfig.LIB_DIRECTORY)
-    chown(celeryconfig.LIB_DIRECTORY, user_name, pwd.getpwnam(user_name).pw_gid, recursive=True)
+    try_makedirs(lib.LIB_DIRECTORY)
+    chown(lib.LIB_DIRECTORY, user_name, pwd.getpwnam(user_name).pw_gid, recursive=True)
     print(u'Register and start our services as user ' + user_name)
     from_template(u'etc/encodebox.conf.template', u'/etc/supervisor/conf.d/encodebox.conf', {
-        u'lib_directory': celeryconfig.LIB_DIRECTORY, u'user': user_name
+        u'lib_directory': lib.LIB_DIRECTORY, u'user': user_name
     })
     subprocess.call([u'service', u'supervisor', u'force-reload'])
 

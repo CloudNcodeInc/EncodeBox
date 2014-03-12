@@ -14,7 +14,7 @@ u"""
 
 from __future__ import absolute_import, division, print_function, unicode_literals
 
-LIB_DIRECTORY = u'/var/encodebox'
+from . import lib
 
 # Time and date settings (http://celery.readthedocs.org/en/latest/configuration.html#id6)
 
@@ -23,7 +23,7 @@ CELERY_ENABLE_UTC = True
 # Task result backend settings (http://celery.readthedocs.org/en/latest/configuration.html#id9)
 
 # Using the database to store task state and results.
-CELERY_RESULT_BACKEND = u'db+sqlite://' + LIB_DIRECTORY + u'/database.sqlite'
+CELERY_RESULT_BACKEND = u'db+sqlite://' + lib.LIB_DIRECTORY + u'/database.sqlite'
 CELERY_RESULT_SERIALIZER = u'json'
 CELERY_RESULT_PERSISTENT = True
 
