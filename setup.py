@@ -94,8 +94,8 @@ call_hook(u'pre_' + action)
 
 setup(
     name=u'encodebox',
-    version=u'0.4.2-beta',
-    packages=find_packages(),
+    version=u'0.4.3-beta',
+    packages=find_packages(exclude=[u'tests']),
     description=u'Transcoding watchfolder called EncodeBox',
     long_description=open(u'README.rst', u'r', encoding=u'utf-8').read(),
     author=u'David Fischer',
@@ -108,7 +108,7 @@ setup(
     install_requires=[str(requirement.req) for requirement in parse_requirements(u'requirements.txt')],
     data_files=[(u'/etc', [u'etc/encodebox.yaml'])],
     entry_points={u'console_scripts': [u'encodebox=encodebox.daemon:main']},
-    **kwargs
-)
+    tests_require=['coverage', 'mock', 'nose'],
+    test_suite=u'tests.encodebox_runtests.main', **kwargs)
 
 call_hook(u'post_' + action)
