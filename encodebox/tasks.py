@@ -121,12 +121,15 @@ def cleanup():
         settings, _ = load_settings()
         delay = settings[u'completed_cleanup_delay']
         max_mtime = time.time() - delay
+        removed = set()
         for root, dirnames, filenames in os.walk(settings[u'completed_directory']):
             for filename in filenames:
                 filename = join(root, filename)
                 if os.stat(filename).st_mtime < max_mtime:
                     print_it(u'Remove file older than {0} {1}'.format(secs_to_time(delay), filename))
                     os.remove(filename)
+                    removed.add(filename)
+        return removed
     except Exception as e:
         print_it(u'[ERROR] Something went wrong, reason: {0}'.format(repr(e)), file=sys.stderr)
         raise
