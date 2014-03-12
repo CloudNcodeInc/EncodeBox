@@ -2,6 +2,7 @@
 .. _celery: http://celery.readthedocs.org/en/latest/
 .. _concurrency: http://celery.readthedocs.org/en/latest/userguide/concurrency/index.html
 .. _ffmpeg: http://www.ffmpeg.org/
+.. _flower: https://github.com/mher/flower
 .. _pip: https://pypi.python.org/pypi/pip
 .. _ppa: http://askubuntu.com/questions/4983/what-are-ppas-and-how-do-i-use-them
 .. _post: http://en.wikipedia.org/wiki/POST_(HTTP)
@@ -97,6 +98,10 @@ Then, you only need to run ``setup.py``::
     python setup.py test
     sudo python setup.py install
 
+You may also install the optional Celery_ web interface (Flower_)::
+
+    sudo pip install flower
+
 ---------------------
 How to configure it ?
 ---------------------
@@ -120,3 +125,18 @@ Manage the services::
 Follow the logs::
 
     tail -f /var/log/encodebox-*.log
+
+Watch the watch-folder directories::
+
+    watch ls -lh ~/EncodeBox/*/*
+
+Start the optional Celery_ web interface (Flower_)::
+
+    celery flower &
+    xdg-open http://localhost:5555
+
+A typical testing scenario:
+
+1. Install, start EncodeBox and open two terminals, one to follow the logs, the other to monitor directories.
+2. Install, start Flower_ and open a browser to monitor transcoding tasks_ and workers_.
+3. Copy some media files into the inputs directory ``~/EncodeBox/inputs`` to trigger some new transcoding tasks.
