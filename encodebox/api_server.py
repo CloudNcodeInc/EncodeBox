@@ -35,7 +35,7 @@ def receive_encoding_report(user_id, content_id, name):
 
 @app.route(u'/encoding/report', methods=[u'GET'])
 def send_reports():
-    print(u'Send reports {0}'.format(reports))
+    print(u'Send reports containing {0} values'.format(len(reports)))
     return json.dumps(reports)
 
 if __name__ == u'__main__':
