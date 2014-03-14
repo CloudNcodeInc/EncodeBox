@@ -14,6 +14,7 @@ from __future__ import absolute_import, division, print_function, unicode_litera
 import json, paramiko, os, shutil, time
 from celery import Celery
 from celery.utils.log import get_task_logger
+from codecs import open
 from os.path import basename, exists, join, splitext
 from pytoolbox import ffmpeg, x264  # For the line with encoder_module to work!
 from pytoolbox.datetime import secs_to_time
@@ -99,10 +100,11 @@ def transcode(in_relpath_json):
         logger.info(u'Move the input file to the completed directory and send outputs to the remote host')
         move(in_abspath, join(settings[u'completed_directory'], in_relpath))
         try:
-            host, directory = task_outputs_remote_directory.split(u':')
+            username_host, directory = task_outputs_remote_directory.split(u':')
+            username, host = username_host.split(u'@')
             ssh_client = paramiko.SSHClient()
             ssh_client.load_system_host_keys()
-            ssh_client.connect(host)
+            ssh_client.connect(host, username=username)
             ssh_client.exec_command(u'mkdir -p "{0}"'.format(directory))
             rsync(source=task_outputs_directory, desination=task_outputs_remote_directory, source_is_dir=True,
                   destination_is_dir=True, archive=True, progress=True, recursive=True, extra=u'ssh')

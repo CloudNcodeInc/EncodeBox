@@ -1,6 +1,6 @@
 inputs_directory: ~/EncodeBox/inputs
 outputs_directory: ~/EncodeBox/outputs
-outputs_remote_directory: host_ip:/var/www/medias/
+outputs_remote_directory: username@host_ip:/var/www/medias
 temporary_directory: ~/EncodeBox/temporary
 failed_directory: ~/EncodeBox/failed
 completed_directory: ~/EncodeBox/completed
