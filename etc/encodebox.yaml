@@ -3,6 +3,8 @@ outputs_directory: ~/EncodeBox/outputs
 temporary_directory: ~/EncodeBox/temporary
 failed_directory: ~/EncodeBox/failed
 completed_directory: ~/EncodeBox/completed
+api_url: http://127.0.0.1:5000/encoding/report
+api_auth: null
 completed_remote_directory: ubuntu@127.0.0.1:medias/
 completed_cleanup_delay: 604800
 hd_transcode_passes:
