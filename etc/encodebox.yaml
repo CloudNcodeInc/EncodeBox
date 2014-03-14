@@ -4,9 +4,9 @@ outputs_remote_directory: username@host_ip:/var/www/medias
 temporary_directory: ~/EncodeBox/temporary
 failed_directory: ~/EncodeBox/failed
 completed_directory: ~/EncodeBox/completed
+completed_cleanup_delay: 604800
 api_url: http://127.0.0.1:5000/encoding/report
 api_auth: null
-completed_cleanup_delay: 604800
 hd_transcode_passes:
 - - ffmpeg
   - '{input}'

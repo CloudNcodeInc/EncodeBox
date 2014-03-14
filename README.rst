@@ -37,11 +37,13 @@ The settings file ``/etc/encodebox.yaml`` of EncodeBox permit to configure the f
 
 :inputs_directory: (~/EncodeBox/inputs) You must put the files to transcode here.
 :outputs_directory: (~/EncodeBox/outputs) The outputs are saved there, within a sub-directory corresponding to the UUID_ of the task.
+:outputs_remote_directory: (username@host_ip:/var/www/medias) This option is not yet used (issue #2)
 :temporary_directory: (~/EncodeBox/temporary) The transcoding workers_ will save the intermediate files here.
 :failed_directory: (~/EncodeBox/failed) The input files are moved there if the transcoding task failed.
 :completed_directory: (~/EncodeBox/completed) The input files are moved there if the transcoding task succeeded.
-:completed_remote_directory: (ubuntu@127.0.0.1:medias/) This option is not yet used (issue #2)
 :completed_cleanup_delay: (604800) Completed files are removed if older than this delay in seconds, default means 7 days.
+:api_url: (http://127.0.0.1:5000/encoding/report) Socket to POST (API) the progress reports of the transcoding tasks.
+:api_auth: (null) Credentials to POST (API) the progress report.
 :hd_transcode_passes: (a long list) The worker_ follows this list of passes (calls to encoders) to transcode the HD content.
 :sd_transcode_passes: (a long list) The worker_ follows this list of passes (calls to encoders) to transcode the SD content.
 
@@ -60,17 +62,16 @@ The "core" available features are:
 * The transcoding worker_ is able to :
     * Detect the resolution of the input media file
     * Select the appropriate transcoding steps (described in the settings file ``/etc/encodebox.yaml``)
-    * Execute the transcoding steps and update the status of the task_ to *PROGRESS* + statistics
+    * Execute the transcoding steps and update the status of the task_ to *ENCODING* + statistics
     * Remove the temporary files
     * Remove the output files in case of error
     * Update the status of the task_ to *SUCCESS* or *FAILURE* + console output of the encoder
+    * POST_ the progress reports to the API_ during the whole transcoding process
+    * Copy the output files to the remote streaming server
 * The periodic cleanup task_ remove completed files older than 7 days
 
 The "core" missing features are:
 
-* The transcoding worker_ does not :
-   * POST_ to the API_, needs workflow design + tests (issue #12 + #4)
-   * Copy the output files to the remote streaming server, needs workflow design + tests (issue #2)
 * The watch-folder does not revoke_/relaunch tasks_ if the input files are removed or updated during transcoding (issue #13)
 * The setup script does not configure RabbitMQ_ with a password (issue #9)
 
@@ -128,7 +129,7 @@ Follow the logs::
 
 Watch the watch-folder directories::
 
-    watch ls -lh ~/EncodeBox/*/*
+    watch ls -lh ~/EncodeBox/*/*/*
 
 Start the optional Celery_ web interface (Flower_)::
 
