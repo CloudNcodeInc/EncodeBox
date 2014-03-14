@@ -11,7 +11,7 @@ u"""
 
 from __future__ import absolute_import, division, print_function, unicode_literals
 
-import json, os, shutil, time
+import json, paramiko, os, shutil, time
 from celery import Celery
 from celery.utils.log import get_task_logger
 from os.path import basename, exists, join, splitext
@@ -20,6 +20,7 @@ from pytoolbox.datetime import secs_to_time
 from pytoolbox.encoding import configure_unicode, to_bytes
 from pytoolbox.ffmpeg import get_media_resolution, HEIGHT
 from pytoolbox.filesystem import try_makedirs
+from pytoolbox.subprocess import rsync
 from subprocess import check_call
 
 from . import celeryconfig, states
@@ -30,19 +31,19 @@ configure_unicode()
 
 app = Celery(u'tasks')
 app.config_from_object(celeryconfig)
-logger = get_task_logger(__name__)
 
 
 @app.task(name=u'encodebox.tasks.transcode')
 def transcode(in_relpath_json):
     u"""Convert an input media file to 3 (SD) or 5 (HD) output files."""
 
+    logger = get_task_logger(u'encodebox.tasks.transcode')
     report = None
-    successful = False
     in_abspath = None
     in_relpath = None
     task_temporary_directory = None
     task_outputs_directory = None
+    final_state = states.FAILURE
     try:
         settings, _ = load_settings()
         in_relpath = json.loads(in_relpath_json)
@@ -61,6 +62,7 @@ def transcode(in_relpath_json):
         logger.info(u'Create outputs directories')
         task_temporary_directory = join(settings[u'temporary_directory'], user_id, content_id)
         task_outputs_directory = join(settings[u'outputs_directory'], user_id, content_id)
+        task_outputs_remote_directory = join(settings[u'outputs_remote_directory'], user_id, content_id)
         try_makedirs(task_temporary_directory)
         try_makedirs(task_outputs_directory)
 
@@ -96,9 +98,20 @@ def transcode(in_relpath_json):
 
         logger.info(u'Move the input file to the completed directory and send outputs to the remote host')
         move(in_abspath, join(settings[u'completed_directory'], in_relpath))
-        #rsync(source=task_outputs_directory, desination=join(settings[u'completed_remote_directory'], task_id),
-        #      source_is_dir=True, destination_is_dir=True, archive=True, progress=True, recursive=True, extra=u'e ssh')
-        successful = True
+        try:
+            host, directory = task_outputs_remote_directory.split(u':')
+            ssh_client = paramiko.SSHClient()
+            ssh_client.load_system_host_keys()
+            ssh_client.connect(host)
+            ssh_client.exec_command(u'mkdir -p "{0}"'.format(directory))
+            rsync(source=task_outputs_directory, desination=task_outputs_remote_directory, source_is_dir=True,
+                  destination_is_dir=True, archive=True, progress=True, recursive=True, extra=u'ssh')
+            final_state = states.SUCCESS
+        except Exception as e:
+            logger.exception(u'Transfer of outputs to remote host failed')
+            final_state = states.TRANSFER_ERROR
+            with open(join(task_outputs_directory, u'transfer-error.log'), u'w', u'utf-8') as log:
+                log.write(repr(e))
     except:
         logger.exception(u'Transcoding task failed')
         logger.info(u'Move the input file to the failed directory and remove the outputs')
@@ -109,7 +122,7 @@ def transcode(in_relpath_json):
         raise
     finally:
         if report:
-            report.send_report(states.SUCCESS if successful else states.FAILURE)
+            report.send_report(final_state)
         logger.info(u'Remove the temporary files')
         if task_temporary_directory and exists(task_temporary_directory):
             shutil.rmtree(task_temporary_directory)
@@ -118,6 +131,7 @@ def transcode(in_relpath_json):
 @app.task(name=u'encodebox.tasks.cleanup')
 def cleanup():
 
+    logger = get_task_logger(u'encodebox.tasks.cleanup')
     try:
         settings, _ = load_settings()
         delay = settings[u'completed_cleanup_delay']

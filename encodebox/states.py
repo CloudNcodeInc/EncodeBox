@@ -14,5 +14,6 @@ from __future__ import absolute_import, division, print_function, unicode_litera
 from celery import states
 
 ENCODING = u'ENCODING'
+TRANSFER_ERROR = u'TRANSFER_ERROR'
 FAILURE = states.FAILURE
 SUCCESS = states.SUCCESS
