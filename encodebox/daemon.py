@@ -23,7 +23,7 @@ def main():
         stdout_it(u'Read settings and create watch-folder directories')
         settings, _ = load_settings(create_directories=True)
         manager = pyinotify.WatchManager()
-        manager.add_watch(settings[u'inputs_directory'], pyinotify.IN_CLOSE_WRITE, rec=True)
+        manager.add_watch(settings[u'inputs_directory'], pyinotify.IN_CLOSE_WRITE, rec=True, auto_add=True)
         handler = InputsHandler()
         handler.settings = settings
         notifier = pyinotify.Notifier(manager, handler)
