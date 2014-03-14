@@ -62,6 +62,9 @@ def call_hook(name):
 
 def pre_install():
     root_required()
+    print(u'Install Debian packages')
+    packages = filter(None, (p.strip() for p in open(u'requirements.apt')))
+    subprocess.check_call([u'apt-get', u'-y', u'install'] + packages)
 
 
 def post_install():
@@ -69,19 +72,17 @@ def post_install():
     from encodebox import lib
     from pytoolbox.filesystem import chown, from_template, try_makedirs, try_remove
     from pytoolbox.network.http import download
-    user_name = os.getlogin()
-    print(u'Install Debian packages')
-    packages = filter(None, (p.strip() for p in open(u'requirements.apt')))
-    subprocess.check_call([u'apt-get', u'-y', u'install'] + packages)
-    print(u'Download and install Nero AAC encoder')
-    try:
-        download(u'ftp://ftp6.nero.com/tools/NeroDigitalAudio.zip', u'/tmp/nero.zip')
-        zipfile.ZipFile(u'/tmp/nero.zip').extract(u'linux/neroAacEnc', u'/usr/local/bin')
-        os.chmod(u'/usr/local/bin/neroAacEnc', os.stat(u'/usr/local/bin/neroAacEnc').st_mode | stat.S_IEXEC)
-    finally:
-        try_remove(u'/tmp/nero.zip')
+    if not os.path.exists(u'/usr/local/bin/neroAacEnc'):
+        try:
+            print(u'Download and install Nero AAC encoder')
+            download(u'ftp://ftp6.nero.com/tools/NeroDigitalAudio.zip', u'/tmp/nero.zip')
+            zipfile.ZipFile(u'/tmp/nero.zip').extract(u'linux/neroAacEnc', u'/usr/local/bin')
+            os.chmod(u'/usr/local/bin/neroAacEnc', os.stat(u'/usr/local/bin/neroAacEnc').st_mode | stat.S_IEXEC)
+        finally:
+            try_remove(u'/tmp/nero.zip')
     print(u'Create directory for storing persistent data')
     try_makedirs(lib.LIB_DIRECTORY)
+    user_name = os.getlogin()
     chown(lib.LIB_DIRECTORY, user_name, pwd.getpwnam(user_name).pw_gid, recursive=True)
     print(u'Register and start our services as user ' + user_name)
     from_template(u'etc/encodebox.conf.template', u'/etc/supervisor/conf.d/encodebox.conf', {
