@@ -95,7 +95,10 @@ def transcode(in_relpath_json):
                     elif status == u'ERROR':
                         raise RuntimeError(statistics)
             else:
-                check_call(transcode_pass)
+                try:
+                    check_call(transcode_pass)
+                except OSError:
+                    raise OSError(to_bytes(u'Missing encoder ' + transcode_pass[0]))
 
         logger.info(u'Move the input file to the completed directory and send outputs to the remote host')
         move(in_abspath, join(settings[u'completed_directory'], in_relpath))
