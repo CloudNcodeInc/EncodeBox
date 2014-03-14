@@ -13,6 +13,7 @@ u"""
 from __future__ import absolute_import, division, print_function, unicode_literals
 
 import json, os, pyinotify, sys
+#from celery import current_app as celery
 from .lib import load_settings, stdout_it, stderr_it
 from .tasks import transcode
 
@@ -35,29 +36,24 @@ def main():
 
 class InputsHandler(pyinotify.ProcessEvent):
 
+    #def __init__(self, *args, **kwargs):
+    #    super(InputsHandler, self).__init__(*args, **kwargs)
+    #    self.tasks = {}
+
     def process_IN_CLOSE_WRITE(self, event):
         try:
             u"""Launch a new transcoding task for the updated input media file."""
             in_relpath = event.pathname.replace(self.settings[u'inputs_directory'] + os.sep, u'')
             stdout_it(u'Launch a new transcode task for file "{0}"\n'.format(in_relpath))
-            transcode.delay(json.dumps(in_relpath))
+            #task_id = self.tasks.pop(in_relpath, None)
+            #if task_id:
+            #    stdout_it(u'Revoke previous task with id "{0}"'.format(task_id))
+            #    celery.control.revoke(task_id, terminate=True)
+            #self.tasks[in_relpath] = transcode.delay(json.dumps(in_relpath)).id
+            transcode.delay(json.dumps(in_relpath)).id
         except Exception as e:
             stderr_it(unicode(e))
             raise
-
-    # def garbage():
-    #     from os.path import abspath, expanduser, isfile, join
-    #     stdout.write(u'Already running for {0:0.1f} seconds\n'.format(time.time() - start_time))
-    #     # FIXME use pyinotify instead of recursively scanning (?)
-    #     # FIXME verify if a task is already launched for the file in_relpath
-    #     for in_relpath in os.listdir(settings[u'inputs_directory']):
-    #         if isfile(join(settings[u'inputs_directory'], in_relpath)):
-    #             stdout.write(u'Launch a new transcode task for file "{0}"\n'.format(in_relpath))
-    #             transcode.delay(settings, in_relpath)
-    #     stdout.flush()
-    #     #time.sleep(60000)
-    #     exit(0)
-
 
 if __name__ == u'__main__':
     main()
