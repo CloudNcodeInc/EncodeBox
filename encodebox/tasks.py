@@ -139,16 +139,14 @@ def cleanup():
     logger = get_task_logger(u'encodebox.tasks.cleanup')
     try:
         settings = load_settings()
-        print(u'Settings {0}'.format(settings))
         delay = settings[u'completed_cleanup_delay']
         max_mtime = time.time() - delay
         removed = set()
         for root, dirnames, filenames in os.walk(settings[u'completed_directory']):
             for filename in filenames:
                 filename = join(root, filename)
-                print(u'Check file older than {0} {1}'.format(secs_to_time(delay), filename))
                 if os.stat(filename).st_mtime < max_mtime:
-                    print(u'Remove file older than {0} {1}'.format(secs_to_time(delay), filename))
+                    logger.info(u'Remove file older than {0} {1}'.format(secs_to_time(delay), filename))
                     os.remove(filename)
                     removed.add(filename)
         return removed
