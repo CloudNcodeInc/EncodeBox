@@ -80,7 +80,6 @@ The "extra" available features are:
 The "core" missing features are:
 
 * The watch-folder does not revoke_/relaunch tasks_ if the input files are removed or updated during transcoding (issue #13)
-* The setup script does not configure RabbitMQ_ with a password (issue #9)
 
 ------------------------------------
 What the release number stands for ?
