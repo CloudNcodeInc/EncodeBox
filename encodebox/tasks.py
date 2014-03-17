@@ -107,9 +107,10 @@ def transcode(in_relpath_json):
             username, host = username_host.split(u'@')
             ssh_client = paramiko.SSHClient()
             ssh_client.load_system_host_keys()
+            ssh_client.set_missing_host_key_policy(paramiko.AutoAddPolicy())  # FIXME man-in-the-middle attack
             ssh_client.connect(host, username=username)
             ssh_client.exec_command(u'mkdir -p "{0}"'.format(directory))
-            rsync(source=task_outputs_directory, desination=task_outputs_remote_directory, source_is_dir=True,
+            rsync(source=task_outputs_directory, destination=task_outputs_remote_directory, source_is_dir=True,
                   destination_is_dir=True, archive=True, progress=True, recursive=True, extra=u'ssh')
             final_state = states.SUCCESS
         except Exception as e:
