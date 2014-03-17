@@ -30,7 +30,7 @@ CELERY_RESULT_PERSISTENT = True
 
 CELERY_ACCEPT_CONTENT = [u'json']
 
-BROKER_URL = u'amqp://guest@localhost//'
+BROKER_URL = u'amqp://encodebox:{rabbit_password}@localhost//'.format(**lib.load_settings())
 
 # Task execution settings (http://celery.readthedocs.org/en/latest/configuration.html#id20)
 

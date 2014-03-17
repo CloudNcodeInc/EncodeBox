@@ -27,6 +27,7 @@ SETTINGS_FILENAME = join(TEST_DIRECTORY, u'settings.yaml')
 SETTINGS = {
     u'completed_directory': COMPLETED_DIRECTORY,
     u'completed_cleanup_delay': 1,
+    u'rabbit_password': u'password'
 }
 
 
@@ -53,21 +54,21 @@ class TestTasks(object):
 
     def test_mock_settings_works(self):
         with mock.patch(u'encodebox.celeryconfig.CELERY_ALWAYS_EAGER', True, create=True):
-            with mock.patch(u'encodebox.lib.SETTINGS_FILENAMES', [], create=True):
+            with mock.patch(u'encodebox.lib.SETTINGS_FILENAME', u'tt', create=True):
                 result = tasks.cleanup.apply()
                 ok_(result.failed())
                 eq_(type(result.result), IOError)
 
     def test_cleanup_empty_directories(self):
         with mock.patch(u'encodebox.celeryconfig.CELERY_ALWAYS_EAGER', True, create=True):
-            with mock.patch(u'encodebox.lib.SETTINGS_FILENAMES', [SETTINGS_FILENAME], create=True):
+            with mock.patch(u'encodebox.lib.SETTINGS_FILENAME', SETTINGS_FILENAME, create=True):
                 result = tasks.cleanup.apply()
                 ok_(result.successful())
                 eq_(result.result, set())
 
     def test_cleanup_0_files(self):
         with mock.patch(u'encodebox.celeryconfig.CELERY_ALWAYS_EAGER', True, create=True):
-            with mock.patch(u'encodebox.lib.SETTINGS_FILENAMES', [SETTINGS_FILENAME], create=True):
+            with mock.patch(u'encodebox.lib.SETTINGS_FILENAME', SETTINGS_FILENAME, create=True):
                 self.create_files()
                 result = tasks.cleanup.apply()
                 ok_(result.successful())
@@ -75,7 +76,7 @@ class TestTasks(object):
 
     def test_cleanup_all_files(self):
         with mock.patch(u'encodebox.celeryconfig.CELERY_ALWAYS_EAGER', True, create=True):
-            with mock.patch(u'encodebox.lib.SETTINGS_FILENAMES', [SETTINGS_FILENAME], create=True):
+            with mock.patch(u'encodebox.lib.SETTINGS_FILENAME', SETTINGS_FILENAME, create=True):
                 self.create_files()
                 time.sleep(2)
                 result = tasks.cleanup.apply()
@@ -86,7 +87,7 @@ class TestTasks(object):
 
     def test_cleanup_complex_scenario(self):
         with mock.patch(u'encodebox.celeryconfig.CELERY_ALWAYS_EAGER', True, create=True):
-            with mock.patch(u'encodebox.lib.SETTINGS_FILENAMES', [SETTINGS_FILENAME], create=True):
+            with mock.patch(u'encodebox.lib.SETTINGS_FILENAME', SETTINGS_FILENAME, create=True):
 
                 self.create_files()
                 time.sleep(1.1)

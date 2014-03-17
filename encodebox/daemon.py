@@ -21,7 +21,7 @@ from .tasks import transcode
 def main():
     try:
         stdout_it(u'Read settings and create watch-folder directories')
-        settings, _ = load_settings(create_directories=True)
+        settings = load_settings(create_directories=True)
         manager = pyinotify.WatchManager()
         manager.add_watch(settings[u'inputs_directory'], pyinotify.ALL_EVENTS, rec=True, auto_add=True)
         handler = InputsHandler()

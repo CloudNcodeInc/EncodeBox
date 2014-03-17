@@ -1,5 +1,5 @@
 celery
 paramiko
 pyinotify
-pytoolbox>=6.5.1-beta
+pytoolbox>=6.5.4-beta
 sqlalchemy

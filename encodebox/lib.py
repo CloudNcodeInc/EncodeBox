@@ -11,21 +11,27 @@ u"""
 
 from __future__ import absolute_import, division, print_function, unicode_literals
 
-import shlex, shutil, sys, yaml
+import random, re, shlex, shutil, string, sys, yaml
 from codecs import open
-from os.path import abspath, dirname, expanduser
+from os.path import abspath, dirname, exists, expanduser
 from pytoolbox.encoding import string_types, to_bytes
-from pytoolbox.filesystem import first_that_exist, try_makedirs
+from pytoolbox.filesystem import try_makedirs
+from subprocess import check_output
 
 HD_HEIGHT = 720
 LIB_DIRECTORY = u'/var/encodebox'
-SETTINGS_FILENAMES = (u'/etc/encodebox.yaml', u'etc/encodebox.yaml')
+SETTINGS_FILENAME = u'/etc/encodebox.yaml'
 
 
-def load_settings(create_directories=False):
-    filename = first_that_exist(*SETTINGS_FILENAMES)
-    if not filename:
-        raise IOError(to_bytes(u'Unable to find any settings file.'))
+def generate_password(chars=None, size=16):
+    chars = chars or string.ascii_letters + string.digits
+    return u''.join(random.choice(chars) for i in xrange(size))
+
+
+def load_settings(filename=None, create_directories=False):
+    filename = filename or SETTINGS_FILENAME
+    if not exists(filename):
+        raise IOError(to_bytes(u'Unable to find settings file "{0}".'.format(filename)))
     with open(filename, u'r', u'utf-8') as f:
         settings = yaml.load(f)
     for key, value in settings.iteritems():
@@ -33,7 +39,12 @@ def load_settings(create_directories=False):
             settings[key] = abspath(expanduser(value))
             if create_directories:
                 try_makedirs(settings[key])
-    return settings, filename
+    return settings
+
+
+def save_settings(settings, filename):
+    with open(filename, u'w', u'utf-8') as f:
+        f.write(yaml.safe_dump(settings, default_flow_style=False))
 
 
 def move(source, destination):
@@ -92,6 +103,16 @@ def passes_from_template(template_passes, **kwargs):
                     the_pass.append([x.format(**kwargs) for x in value])
             passes.append(the_pass)
     return passes
+
+
+def rabbit_users():
+    stdout = check_output([u'rabbitmqctl', u'list_users'])
+    return re.findall(u'^([a-z]+)\s+.*$', unicode(stdout), re.MULTILINE)
+
+
+def rabbit_vhosts():
+    stdout = check_output([u'rabbitmqctl', u'list_vhosts'])
+    return re.findall(u'^([a-z]+)$', unicode(stdout), re.MULTILINE)
 
 
 def sanitize_filename(filename):
