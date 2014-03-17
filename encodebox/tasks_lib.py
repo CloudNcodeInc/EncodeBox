@@ -42,7 +42,7 @@ class TranscodeProgressReport(object):
             statistics = {}
         task_elapsed = time.time() - self.start_time
         pass_progress = max(0, min(1, float(statistics.get(u'percent', 100)) / 100))
-        task_progress = max(0, min(1, (counter - 1 + pass_progress) / self.total))
+        task_progress = max(0, min(1, (counter - 1 + pass_progress) / self.total)) if self.total > 0 else 1
         task_eta = int(task_elapsed * (1 - task_progress) / task_progress) if task_progress > 0 else 0
         self.logger.info(u'{state} {task_progress:0.0%} {task_elapsed} ETA {task_eta} - Pass {counter} of {total} : '
                          u'{pass_progress:0.0%} {pass_elapsed} ETA {pass_eta} {pass_fps} fps'.format(
