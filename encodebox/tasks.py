@@ -103,6 +103,7 @@ def transcode(in_relpath_json):
         logger.info(u'Move the input file to the completed directory and send outputs to the remote host')
         move(in_abspath, join(settings[u'completed_directory'], in_relpath))
         try:
+            report.send_report(states.TRANSFERRING)
             username_host, directory = task_outputs_remote_directory.split(u':')
             username, host = username_host.split(u'@')
             ssh_client = paramiko.SSHClient()
