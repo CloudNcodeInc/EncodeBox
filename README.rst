@@ -8,6 +8,7 @@
 .. _post: http://en.wikipedia.org/wiki/POST_(HTTP)
 .. _rabbitmq: https://www.rabbitmq.com/
 .. _revoke: http://celery.readthedocs.org/en/latest/userguide/workers.html#revoking-tasks
+.. _rsync: http://rsync.samba.org/
 .. _supervisor: http://supervisord.org/
 .. _task: http://celery.readthedocs.org/en/latest/userguide/tasks.html
 .. _tasks: http://celery.readthedocs.org/en/latest/userguide/tasks.html
@@ -37,7 +38,7 @@ The settings file ``/etc/encodebox.yaml`` of EncodeBox permit to configure the f
 
 :inputs_directory: (~/EncodeBox/inputs) You must put the files to transcode here.
 :outputs_directory: (~/EncodeBox/outputs) The outputs are saved there, within a sub-directory corresponding to the UUID_ of the task.
-:outputs_remote_directory: (username@host_ip:/var/www/medias) This option is not yet used (issue #2)
+:outputs_remote_directory: (username@host_ip:/var/www/medias) The outputs are copied to this remote directory with rsync_.
 :temporary_directory: (~/EncodeBox/temporary) The transcoding workers_ will save the intermediate files here.
 :failed_directory: (~/EncodeBox/failed) The input files are moved there if the transcoding task failed.
 :completed_directory: (~/EncodeBox/completed) The input files are moved there if the transcoding task succeeded.
