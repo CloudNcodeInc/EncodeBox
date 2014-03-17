@@ -49,6 +49,8 @@ def transcode(in_relpath_json):
         settings = load_settings()
         in_relpath = json.loads(in_relpath_json)
         in_abspath = join(settings[u'inputs_directory'], in_relpath)
+        completed_abspath = join(settings[u'completed_directory'], in_relpath)
+        failed_abspath = join(settings[u'failed_directory'], in_relpath)
         try:
             in_directories = in_relpath.split(os.sep)
             assert(len(in_directories) == 3)
@@ -64,6 +66,8 @@ def transcode(in_relpath_json):
         task_temporary_directory = join(settings[u'temporary_directory'], user_id, content_id)
         task_outputs_directory = join(settings[u'outputs_directory'], user_id, content_id)
         task_outputs_remote_directory = join(settings[u'outputs_remote_directory'], user_id, content_id)
+        for path in (completed_abspath, failed_abspath, task_temporary_directory, task_outputs_directory):
+            shutil.rmtree(path, ignore_errors=True)
         try_makedirs(task_temporary_directory)
         try_makedirs(task_outputs_directory)
 
@@ -101,7 +105,7 @@ def transcode(in_relpath_json):
                     raise OSError(to_bytes(u'Missing encoder ' + transcode_pass[0]))
 
         logger.info(u'Move the input file to the completed directory and send outputs to the remote host')
-        move(in_abspath, join(settings[u'completed_directory'], in_relpath))
+        move(in_abspath, completed_abspath)
         try:
             report.send_report(states.TRANSFERRING)
             username_host, directory = task_outputs_remote_directory.split(u':')
@@ -112,7 +116,7 @@ def transcode(in_relpath_json):
             ssh_client.connect(host, username=username)
             ssh_client.exec_command(u'mkdir -p "{0}"'.format(directory))
             rsync(source=task_outputs_directory, destination=task_outputs_remote_directory, source_is_dir=True,
-                  destination_is_dir=True, archive=True, progress=True, recursive=True, extra=u'ssh')
+                  destination_is_dir=True, archive=True, delete=True, progress=True, recursive=True, extra=u'ssh')
             final_state = states.SUCCESS
         except Exception as e:
             logger.exception(u'Transfer of outputs to remote host failed')
@@ -123,7 +127,7 @@ def transcode(in_relpath_json):
         logger.exception(u'Transcoding task failed')
         logger.info(u'Move the input file to the failed directory and remove the outputs')
         if in_abspath and in_relpath:
-            move(in_abspath, join(settings[u'failed_directory'], in_relpath))
+            move(in_abspath, failed_abspath)
         if task_outputs_directory and exists(task_outputs_directory):
             shutil.rmtree(task_outputs_directory)
         raise
