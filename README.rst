@@ -13,6 +13,7 @@
 .. _task: http://celery.readthedocs.org/en/latest/userguide/tasks.html
 .. _tasks: http://celery.readthedocs.org/en/latest/userguide/tasks.html
 .. _uuid: http://en.wikipedia.org/wiki/Universally_unique_identifier
+.. _watch: http://en.wikipedia.org/wiki/Watch_(Unix)
 .. _worker: http://docs.celeryproject.org/en/latest/userguide/workers.html
 .. _workers: http://docs.celeryproject.org/en/latest/userguide/workers.html
 .. _wowza: http://www.wowza.com/
@@ -70,6 +71,11 @@ The "core" available features are:
     * POST_ the progress reports to the API_ during the whole transcoding process
     * Copy the output files to the remote streaming server
 * The periodic cleanup task_ remove completed files older than 7 days
+
+The "extra" available features are:
+
+* The test API_ server to collect progress of the transcoding tasks_ for debugging purposes.
+* The test API_ client reporting the progress of the transcoding tasks_ by calling the test API_ server.
 
 The "core" missing features are:
 
@@ -137,8 +143,18 @@ Start the optional Celery_ web interface (Flower_)::
     celery flower &
     xdg-open http://localhost:5555
 
+Start the optional test API server::
+
+    python -m encodebox.api_server
+
+Use the test API client to get progress of the transcoding tasks_::
+
+    python -m encodebox.api_client
+
 A typical testing scenario:
 
 1. Install, start EncodeBox and open two terminals, one to follow the logs, the other to monitor directories.
-2. Install, start Flower_ and open a browser to monitor transcoding tasks_ and workers_.
-3. Copy some media files into the inputs directory ``~/EncodeBox/inputs`` to trigger some new transcoding tasks.
+2. [optional] Install, start Flower_ and open a browser to monitor transcoding tasks_ and workers_.
+3. Start the test API_ server.
+4. Copy some media files into the inputs directory ``~/EncodeBox/inputs`` to trigger some new transcoding tasks.
+5. Call the test API_ client few times or use watch_ to call it in a regular basis.
