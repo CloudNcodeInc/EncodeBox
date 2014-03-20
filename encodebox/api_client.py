@@ -14,7 +14,7 @@ u"""
 
 from __future__ import absolute_import, division, print_function, unicode_literals
 
-import requests
+import pprint, requests
 
 if __name__ == u'__main__':
-    print(requests.get(u'http://127.0.0.1:5000/encoding/report').json())
+    pprint.pprint(requests.get(u'http://127.0.0.1:5000/encoding/report').json())
