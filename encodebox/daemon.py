@@ -52,7 +52,7 @@ class InputsHandler(pyinotify.ProcessEvent):
                 #    stdout_it(u'Revoke previous task with id "{0}"'.format(task_id))
                 #    celery.control.revoke(task_id, terminate=True)
                 #self.tasks[in_relpath] = transcode.delay(json.dumps(in_relpath)).id
-                transcode.delay(json.dumps(in_relpath)).id
+                transcode.delay(json.dumps(in_relpath))
         except Exception as e:
             stderr_it(unicode(e))
             raise
