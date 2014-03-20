@@ -21,6 +21,7 @@ from subprocess import check_output
 HD_HEIGHT = 720
 LIB_DIRECTORY = u'/var/encodebox'
 SETTINGS_FILENAME = u'/etc/encodebox.yaml'
+USERNAME = u'www-data'  # os.getlogin()
 
 
 def generate_password(chars=None, size=16):
