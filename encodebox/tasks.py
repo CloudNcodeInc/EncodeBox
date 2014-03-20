@@ -54,6 +54,7 @@ def transcode(in_relpath_json):
             assert(len(in_directories) == 4)
             user_id = in_directories[0]
             content_id = in_directories[1]
+            assert(in_directories[2] == u'uploaded')
             name = in_directories[3]
         except:
             raise ValueError(to_bytes(u'Input file path does not respect template user_id/content_id/name'))
