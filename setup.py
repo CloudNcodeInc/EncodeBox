@@ -91,7 +91,7 @@ def post_install():
         print(u'Generate configuration file "{0}"'.format(filename))
         password = lib.generate_password()
         settings[u'rabbit_password'] = password
-        lib.save_settings(settings, filename)
+        lib.save_settings(filename, settings)
 
     print(u'Configure RabbitMQ Message Broker')
     check_call([u'service', u'rabbitmq-server', u'start'])
