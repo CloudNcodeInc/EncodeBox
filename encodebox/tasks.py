@@ -66,6 +66,7 @@ def transcode(in_relpath_json):
         remote_directory = join(settings[u'remote_directory'], user_id, content_id)
 
         report = TranscodeProgressReport(settings[u'api_url'], settings[u'api_auth'], user_id, content_id, name, logger)
+        report.send_report(states.STARTED, counter=0)
 
         logger.info(u'Create outputs directories')
 
