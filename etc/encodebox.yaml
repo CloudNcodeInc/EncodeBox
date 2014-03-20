@@ -3,6 +3,7 @@ remote_directory: username@host_ip:/usr/local/WowzaStreamingEngine/content
 completed_cleanup_delay: 604800
 api_url: http://127.0.0.1:5000/encoding/report
 api_auth: null
+hd_smil_template: templates/hd.smil
 hd_transcode_passes:
 - - ffmpeg
   - '{input}'
@@ -38,9 +39,9 @@ hd_transcode_passes:
   - '{tmp}/v.h264'
   - '--pass 2 --fps 25 --bitrate 894 --no-scenecut --stats "{tmp}/x264pass.log"'
 - - ffmpeg
-  - '{tmp}/v.h264'
+  - ['{tmp}/v.h264', '{tmp}/a.mp4']
   - '{out}/{name}_894.mp4'
-  - -vcodec copy
+  - '-vcodec copy -acodec copy'
 - - ffmpeg
   - '{input}'
   - '{tmp}/v.y4m'
@@ -54,9 +55,9 @@ hd_transcode_passes:
   - '{tmp}/v.h264'
   - '--pass 2 --fps 25 --bitrate 400 --no-scenecut --stats "{tmp}/x264pass.log"'
 - - ffmpeg
-  - '{tmp}/v.h264'
+  - ['{tmp}/v.h264', '{tmp}/a.mp4']
   - '{out}/{name}_400.mp4'
-  - '-vcodec copy'
+  - '-vcodec copy -acodec copy'
 sd_transcode_passes:
 - - ffmpeg
   - '{input}'
@@ -92,9 +93,9 @@ sd_transcode_passes:
   - '{tmp}/v.h264'
   - '--pass 2 --fps 25 --bitrate 894 --no-scenecut --stats "{tmp}/x264pass.log"'
 - - ffmpeg
-  - '{tmp}/v.h264'
+  - ['{tmp}/v.h264', '{tmp}/a.mp4']
   - '{out}/{name}_894.mp4'
-  - -vcodec copy
+  - '-vcodec copy -acodec copy'
 - - ffmpeg
   - '{input}'
   - '{tmp}/v.y4m'
@@ -108,6 +109,6 @@ sd_transcode_passes:
   - '{tmp}/v.h264'
   - '--pass 2 --fps 25 --bitrate 400 --no-scenecut --stats "{tmp}/x264pass.log"'
 - - ffmpeg
-  - '{tmp}/v.h264'
+  - ['{tmp}/v.h264', '{tmp}/a.mp4']
   - '{out}/{name}_400.mp4'
-  - '-vcodec copy'
+  - '-vcodec copy -acodec copy'
