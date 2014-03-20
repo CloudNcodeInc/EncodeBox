@@ -37,17 +37,22 @@ EncodeBox is, at time of writing this, composed of two services controlled by su
 
 The settings file ``/etc/encodebox.yaml`` of EncodeBox permit to configure the following options:
 
-:inputs_directory: (~/EncodeBox/inputs) You must put the files to transcode here.
-:outputs_directory: (~/EncodeBox/outputs) The outputs are saved there, within a sub-directory corresponding to the UUID_ of the task.
-:outputs_remote_directory: (username@host_ip:/var/www/medias) The outputs are copied to this remote directory with rsync_.
-:temporary_directory: (~/EncodeBox/temporary) The transcoding workers_ will save the intermediate files here.
-:failed_directory: (~/EncodeBox/failed) The input files are moved there if the transcoding task failed.
-:completed_directory: (~/EncodeBox/completed) The input files are moved there if the transcoding task succeeded.
+:local_directory: (/var/www/data) All the files managed by EncodeBox must be transfered there.
+:remote_directory: (username@host_ip:/var/www/medias) The outputs are copied to this remote directory with rsync_.
 :completed_cleanup_delay: (604800) Completed files are removed if older than this delay in seconds, default means 7 days.
 :api_url: (http://127.0.0.1:5000/encoding/report) Socket to POST (API) the progress reports of the transcoding tasks.
 :api_auth: (null) Credentials to POST (API) the progress report.
+:hd_smil_template:
+:sd_smil_template:
 :hd_transcode_passes: (a long list) The worker_ follows this list of passes (calls to encoders) to transcode the HD content.
 :sd_transcode_passes: (a long list) The worker_ follows this list of passes (calls to encoders) to transcode the SD content.
+
+The transcoding workers_ will handle any input file into ``local_directory/user_id/content_id/uploaded/`` by using the following structure:
+
+* The intermediate files are temporarily stored into the sub-directory ``<local_directory>/user_id/content_id/temporary/``.
+* The outputs are saved into the sub-directory ``<local_directory>/user_id/content_id/outputs/``.
+* The input file is moved into ``<local_directory>/user_id/content_id/completed/`` in case of success.
+* The input file is moved into ``<local_directory>/user_id/content_id/failed/`` in case of failure.
 
 --------------------
 State of the project
