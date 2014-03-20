@@ -89,6 +89,7 @@ The "core" available features are:
     * Detect the resolution of the input media file
     * Select the appropriate transcoding steps (described in the settings file ``/etc/encodebox.yaml``)
     * Execute the transcoding steps and update the status of the task_ to *ENCODING* + statistics
+    * Generate the SMIL file according to a template
     * Remove the temporary files
     * Remove the output files in case of error
     * Update the status of the task_ to *SUCCESS* or *FAILURE* + console output of the encoder
