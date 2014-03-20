@@ -16,14 +16,15 @@ from codecs import open
 from nose.tools import eq_, ok_
 from os.path import exists
 from pytoolbox.filesystem import try_makedirs, try_remove
-from .settings import set_test_settings, COMPLETED_DIRECTORY, SETTINGS_FILENAME, TEST_FILES
+from .settings import set_test_settings, COMPLETED_DIRECTORY, DIRECTORIES, SETTINGS_FILENAME, TEST_FILES
 
 
 class TestTasks(object):
 
     def setUp(self):
         set_test_settings()
-        try_makedirs(COMPLETED_DIRECTORY)
+        for directory in DIRECTORIES:
+            try_makedirs(directory)
 
     def tearDown(self):
         try_remove(SETTINGS_FILENAME)
@@ -31,19 +32,12 @@ class TestTasks(object):
 
     def create_files(self):
         for test_file in TEST_FILES:
-                    with open(test_file, u'w', u'utf-8') as f:
-                        f.write(u'some content for the test')
+            with open(test_file, u'w', u'utf-8') as f:
+                f.write(u'some content for the test')
 
     def create_or_update_file(self, index):
         with open(TEST_FILES[index], u'a', u'utf-8') as f:
             f.write(u'an update')
-
-    def test_mock_settings_works(self):
-        with mock.patch(u'encodebox.celeryconfig.CELERY_ALWAYS_EAGER', True, create=True):
-            from encodebox import tasks
-            result = tasks.cleanup.apply()
-            ok_(result.failed())
-            eq_(type(result.result), IOError)
 
     def test_cleanup_empty_directories(self):
         with mock.patch(u'encodebox.celeryconfig.CELERY_ALWAYS_EAGER', True, create=True):
