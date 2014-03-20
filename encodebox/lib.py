@@ -11,7 +11,7 @@ u"""
 
 from __future__ import absolute_import, division, print_function, unicode_literals
 
-import random, re, shlex, shutil, string, sys, yaml
+import os, random, re, shlex, shutil, string, sys, yaml
 from codecs import open
 from os.path import abspath, dirname, exists, expanduser
 from pytoolbox.encoding import string_types, to_bytes
@@ -29,7 +29,8 @@ def generate_password(chars=None, size=16):
 
 
 def load_settings(filename=None, create_directories=False):
-    filename = filename or SETTINGS_FILENAME
+    default = os.environ.get(u'ENCODEBOX_SETTINGS_FILENAME', SETTINGS_FILENAME)
+    filename = filename or default
     if not exists(filename):
         raise IOError(to_bytes(u'Unable to find settings file "{0}".'.format(filename)))
     with open(filename, u'r', u'utf-8') as f:
@@ -42,7 +43,7 @@ def load_settings(filename=None, create_directories=False):
     return settings
 
 
-def save_settings(settings, filename):
+def save_settings(filename, settings):
     with open(filename, u'w', u'utf-8') as f:
         f.write(yaml.safe_dump(settings, default_flow_style=False))
 
