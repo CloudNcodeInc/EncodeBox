@@ -64,16 +64,14 @@ The transcoding workers_ will (try) to POST_ the following informations at the U
         "eta": 135
     }
 
-.. |state_media| replace:: The state-machine of a media asset handled by EncodeBox.
-
 Following this state-machine:
 
-.. figure:: docs/state_media.png
+.. figure:: https://bytebucket.org/cloudncode/encodebox/raw/eb1226392c3c07916cc3ba7dc36cc058291e39d8/docs/state_media.png?token=8180837e4a2e83c23cebb310943326074165a761
     :width: 437px
     :align: center
-    :alt: |state_media|
+    :alt: The state-machine of a media asset handled by EncodeBox.
 
-    |state_media|
+    The state-machine of a media asset handled by EncodeBox.
 
 --------------------
 State of the project
