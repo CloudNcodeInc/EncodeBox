@@ -118,8 +118,8 @@ def transcode(in_relpath_json):
             ssh_client.set_missing_host_key_policy(paramiko.AutoAddPolicy())  # FIXME man-in-the-middle attack
             ssh_client.connect(host, username=username)
             ssh_client.exec_command(u'mkdir -p "{0}"'.format(directory))
-            rsync(source=outputs_directory, destination=remote_directory, source_is_dir=True,
-                  destination_is_dir=True, archive=True, delete=True, progress=True, recursive=True, extra=u'ssh')
+            rsync(source=outputs_directory, destination=remote_directory, source_is_dir=True, destination_is_dir=True,
+                  archive=True, delete=True, progress=True, recursive=True, extra=u'ssh')
             final_state = states.SUCCESS
         except Exception as e:
             logger.exception(u'Transfer of outputs to remote host failed')
