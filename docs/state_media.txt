@@ -1,0 +1,25 @@
+@startuml
+
+skinparam state {
+    FontColor          white
+    AttributeFontColor white
+    FontSize           17
+    AttributeFontSize  15
+    AttributeFontname  Droid Sans Mono
+    BackgroundColor    #527BC6
+    BorderColor        black
+    ArrowColor         #222266
+}
+
+[*] -right-> STARTED : <b>Added</b>\nby the uploader
+STARTED --> ENCODING : <b>Accepted</b>\nby the transcoders
+STARTED --> FAILURE
+ENCODING --> TRANSFERRING : <b>Processed</b>\nby the transcoders
+ENCODING --> FAILURE
+TRANSFERRING --> SUCCESS : <b>Transferred</b>\nto the streaming server
+TRANSFERRING --> TRANSFER_ERROR
+
+SUCCESS --> [*]
+FAILURE --> [*]
+TRANSFER_ERROR --> [*]
+@enduml

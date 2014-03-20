@@ -12,6 +12,7 @@
 .. _supervisor: http://supervisord.org/
 .. _task: http://celery.readthedocs.org/en/latest/userguide/tasks.html
 .. _tasks: http://celery.readthedocs.org/en/latest/userguide/tasks.html
+.. _url: http://en.wikipedia.org/wiki/Uniform_Resource_Locator
 .. _uuid: http://en.wikipedia.org/wiki/Universally_unique_identifier
 .. _watch: http://en.wikipedia.org/wiki/Watch_(Unix)
 .. _worker: http://docs.celeryproject.org/en/latest/userguide/workers.html
@@ -53,6 +54,26 @@ The transcoding workers_ will handle any input file into ``local_directory/user_
 * The outputs are saved into the sub-directory ``<local_directory>/user_id/content_id/outputs/``.
 * The input file is moved into ``<local_directory>/user_id/content_id/completed/`` in case of success.
 * The input file is moved into ``<local_directory>/user_id/content_id/failed/`` in case of failure.
+
+The transcoding workers_ will (try) to POST_ the following informations at the URL_ ``api_url``:
+
+    {
+        "state": "ENCODING",
+        "progress": 0.67316,
+        "elapsed": 415.329475,
+        "eta": 135
+    }
+
+.. |state_media| replace:: The state-machine of a media asset handled by EncodeBox.
+
+Following this state-machine:
+
+.. figure:: docs/state_media.png
+    :width: 437px
+    :align: center
+    :alt: |state_media|
+
+    |state_media|
 
 --------------------
 State of the project
