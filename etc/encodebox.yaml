@@ -3,7 +3,8 @@ remote_directory: username@host_ip:/usr/local/WowzaStreamingEngine/content
 completed_cleanup_delay: 604800
 api_url: http://127.0.0.1:5000/encoding/report
 api_auth: null
-hd_smil_template: templates/hd.smil
+hd_smil_template: /etc/encodebox/hd.smil
+sd_smil_template: /etc/encodebox/sd.smil
 hd_transcode_passes:
 - - ffmpeg
   - '{input}'

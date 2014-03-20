@@ -1,0 +1,26 @@
+<smil>
+    <head>
+    </head>
+    <body>
+        <switch>
+            <video src="mp4:{name}_2000.mp4" width="854" height="480" system-bitrate="2129000">
+                <param name="videoCodecId" value="avc1.64001E" valuetype="data"/>
+                <param name="audioCodecId" value="mp4a.40.2" valuetype="data"/>
+                <param name="audioBitrate" value="128000" valuetype="data"/>
+                <param name="videoBitrate" value="2001000" valuetype="data"/>
+            </video>
+            <video src="mp4:{name}_800.mp4" width="480" height="272" system-bitrate="1023000">
+                <param name="videoCodecId" value="avc1.64001E" valuetype="data"/>
+                <param name="audioCodecId" value="mp4a.40.2" valuetype="data"/>
+                <param name="audioBitrate" value="128000" valuetype="data"/>
+                <param name="videoBitrate" value="895000" valuetype="data"/>
+            </video>
+            <video src="mp4:{name}_400.mp4" width="288" height="160" system-bitrate="528000">
+                <param name="videoCodecId" value="avc1.64001E" valuetype="data"/>
+                <param name="audioCodecId" value="mp4a.40.2" valuetype="data"/>
+                <param name="audioBitrate" value="128000" valuetype="data"/>
+                <param name="videoBitrate" value="400000" valuetype="data"/>
+            </video>
+        </switch>
+    </body>
+</smil>

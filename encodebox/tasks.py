@@ -20,7 +20,7 @@ from pytoolbox import ffmpeg, x264  # For the line with encoder_module to work!
 from pytoolbox.datetime import secs_to_time
 from pytoolbox.encoding import configure_unicode, to_bytes
 from pytoolbox.ffmpeg import get_media_resolution, HEIGHT
-from pytoolbox.filesystem import try_makedirs
+from pytoolbox.filesystem import from_template, try_makedirs
 from pytoolbox.subprocess import rsync
 from subprocess import check_call
 
@@ -64,6 +64,7 @@ def transcode(in_relpath_json):
         temporary_directory = join(settings[u'local_directory'], user_id, content_id, u'temporary', name)
         outputs_directory = join(settings[u'local_directory'], user_id, content_id, u'outputs', name)
         remote_directory = join(settings[u'remote_directory'], user_id, content_id)
+        sanitized_name = sanitize_filename(splitext(name)[0])
 
         report = TranscodeProgressReport(settings[u'api_url'], settings[u'api_auth'], user_id, content_id, name, logger)
         report.send_report(states.STARTED, counter=0)
@@ -81,12 +82,16 @@ def transcode(in_relpath_json):
 
         quality = u'hd' if resolution[HEIGHT] >= HD_HEIGHT else u'sd'
         template_transcode_passes = settings[quality + u'_transcode_passes']
+        template_smil_filename = settings[quality + u'_smil_template']
 
         logger.info(u'Media {0} {1}p {2}'.format(quality.upper(), resolution[HEIGHT], in_relpath))
 
+        logger.info(u'Generate SMIL file from templated SMIL file')
+        smil_filename = join(outputs_directory, sanitized_name + u'.smil')
+        from_template(template_smil_filename, smil_filename, {u'name': sanitized_name})
+
         logger.info(u'Generate transcoding passes from templated transcoding passes')
-        transcode_passes = passes_from_template(template_transcode_passes, input=in_abspath,
-                                                name=sanitize_filename(splitext(basename(in_relpath))[0]),
+        transcode_passes = passes_from_template(template_transcode_passes, input=in_abspath, name=sanitized_name,
                                                 out=outputs_directory, tmp=temporary_directory)
         report.transcode_passes = transcode_passes
 
