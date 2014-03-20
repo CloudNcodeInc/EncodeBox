@@ -4,7 +4,7 @@
 # Transcoding watchfolder called EncodeBox
 # Retrieved from git clone https://bitbucket.org/cloudncode/encodebox.git
 u"""
-    Run the unit tests of EncodeBox.
+    Settings for the unit-tests of EncodeBox.
 
     :author: David Fischer <david.fischer.ch@gmail.com>
     :copyright: (c) 2014 <TODO Company> Inc. All rights reserved.
