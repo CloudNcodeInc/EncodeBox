@@ -14,6 +14,7 @@ from __future__ import absolute_import, division, print_function, unicode_litera
 
 import json, os, pyinotify, sys
 #from celery import current_app as celery
+from os.path import basename, dirname
 from .lib import load_settings, stdout_it, stderr_it
 from .tasks import transcode
 
@@ -23,7 +24,7 @@ def main():
         stdout_it(u'Read settings and create watch-folder directories')
         settings = load_settings(create_directories=True)
         manager = pyinotify.WatchManager()
-        manager.add_watch(settings[u'inputs_directory'], pyinotify.ALL_EVENTS, rec=True, auto_add=True)
+        manager.add_watch(settings[u'local_directory'], pyinotify.ALL_EVENTS, rec=True, auto_add=True)
         handler = InputsHandler()
         handler.settings = settings
         notifier = pyinotify.Notifier(manager, handler)
@@ -43,14 +44,15 @@ class InputsHandler(pyinotify.ProcessEvent):
     def process_IN_CLOSE_WRITE(self, event):
         try:
             u"""Launch a new transcoding task for the updated input media file."""
-            in_relpath = event.pathname.replace(self.settings[u'inputs_directory'] + os.sep, u'')
-            stdout_it(u'Launch a new transcode task for file "{0}"\n'.format(in_relpath))
-            #task_id = self.tasks.pop(in_relpath, None)
-            #if task_id:
-            #    stdout_it(u'Revoke previous task with id "{0}"'.format(task_id))
-            #    celery.control.revoke(task_id, terminate=True)
-            #self.tasks[in_relpath] = transcode.delay(json.dumps(in_relpath)).id
-            transcode.delay(json.dumps(in_relpath)).id
+            in_relpath = event.pathname.replace(self.settings[u'local_directory'] + os.sep, u'')
+            if basename(dirname(in_relpath)) == u'uploaded':
+                stdout_it(u'Launch a new transcode task for file "{0}"\n'.format(in_relpath))
+                #task_id = self.tasks.pop(in_relpath, None)
+                #if task_id:
+                #    stdout_it(u'Revoke previous task with id "{0}"'.format(task_id))
+                #    celery.control.revoke(task_id, terminate=True)
+                #self.tasks[in_relpath] = transcode.delay(json.dumps(in_relpath)).id
+                transcode.delay(json.dumps(in_relpath)).id
         except Exception as e:
             stderr_it(unicode(e))
             raise

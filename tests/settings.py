@@ -17,13 +17,15 @@ from os.path import abspath, dirname, join
 from encodebox.lib import save_settings
 
 TEST_DIRECTORY = abspath(dirname(__file__))
-COMPLETED_DIRECTORY = join(TEST_DIRECTORY, u'completed')
-DIRECTORIES = [join(COMPLETED_DIRECTORY, d) for d in (u'a/b/c', u'd/e/f/g', u'h')]
-TEST_FILES = [join(d, u'file.txt') for d in DIRECTORIES]
+LOCAL_DIRECTORY = join(TEST_DIRECTORY, u'local')
+DIRECTORIES = (u'a/b/c', u'd/e/f/g', u'h')
+
+COMPLETED_FILES = [join(LOCAL_DIRECTORY, d, u'completed', u'file.txt') for d in DIRECTORIES]
+OTHER_FILES = [join(LOCAL_DIRECTORY, d, u'other', u'file.txt') for d in DIRECTORIES]
 
 SETTINGS_FILENAME = join(TEST_DIRECTORY, u'settings.yaml')
 SETTINGS = {
-    u'completed_directory': COMPLETED_DIRECTORY,
+    u'local_directory': LOCAL_DIRECTORY,
     u'completed_cleanup_delay': 1,
     u'rabbit_password': u'password'
 }

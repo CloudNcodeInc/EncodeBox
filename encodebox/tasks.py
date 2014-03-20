@@ -41,35 +41,37 @@ def transcode(in_relpath_json):
     logger = get_task_logger(u'encodebox.tasks.transcode')
     report = None
     in_abspath = None
-    in_relpath = None
-    task_temporary_directory = None
-    task_outputs_directory = None
+    failed_abspath = None
+    temporary_directory = None
+    outputs_directory = None
     final_state = states.FAILURE
     try:
         settings = load_settings()
         in_relpath = json.loads(in_relpath_json)
-        in_abspath = join(settings[u'inputs_directory'], in_relpath)
-        completed_abspath = join(settings[u'completed_directory'], in_relpath)
-        failed_abspath = join(settings[u'failed_directory'], in_relpath)
+        in_abspath = join(settings[u'local_directory'], in_relpath)
         try:
             in_directories = in_relpath.split(os.sep)
-            assert(len(in_directories) == 3)
+            assert(len(in_directories) == 4)
             user_id = in_directories[0]
             content_id = in_directories[1]
-            name = in_directories[2]
+            name = in_directories[3]
         except:
             raise ValueError(to_bytes(u'Input file path does not respect template user_id/content_id/name'))
+
+        completed_abspath = join(settings[u'local_directory'], user_id, content_id, u'completed', name)
+        failed_abspath = join(settings[u'local_directory'], user_id, content_id, u'failed', name)
+        temporary_directory = join(settings[u'local_directory'], user_id, content_id, u'temporary', name)
+        outputs_directory = join(settings[u'local_directory'], user_id, content_id, u'outputs', name)
+        remote_directory = join(settings[u'remote_directory'], user_id, content_id)
 
         report = TranscodeProgressReport(settings[u'api_url'], settings[u'api_auth'], user_id, content_id, name, logger)
 
         logger.info(u'Create outputs directories')
-        task_temporary_directory = join(settings[u'temporary_directory'], user_id, content_id)
-        task_outputs_directory = join(settings[u'outputs_directory'], user_id, content_id)
-        task_outputs_remote_directory = join(settings[u'outputs_remote_directory'], user_id, content_id)
-        for path in (completed_abspath, failed_abspath, task_temporary_directory, task_outputs_directory):
+
+        for path in (completed_abspath, failed_abspath, temporary_directory, outputs_directory):
             shutil.rmtree(path, ignore_errors=True)
-        try_makedirs(task_temporary_directory)
-        try_makedirs(task_outputs_directory)
+        try_makedirs(temporary_directory)
+        try_makedirs(outputs_directory)
 
         resolution = get_media_resolution(in_abspath)
         if not resolution:
@@ -83,7 +85,7 @@ def transcode(in_relpath_json):
         logger.info(u'Generate transcoding passes from templated transcoding passes')
         transcode_passes = passes_from_template(template_transcode_passes, input=in_abspath,
                                                 name=sanitize_filename(splitext(basename(in_relpath))[0]),
-                                                out=task_outputs_directory, tmp=task_temporary_directory)
+                                                out=outputs_directory, tmp=temporary_directory)
         report.transcode_passes = transcode_passes
 
         logger.info(u'Execute transcoding passes')
@@ -108,35 +110,35 @@ def transcode(in_relpath_json):
         move(in_abspath, completed_abspath)
         try:
             report.send_report(states.TRANSFERRING)
-            username_host, directory = task_outputs_remote_directory.split(u':')
+            username_host, directory = remote_directory.split(u':')
             username, host = username_host.split(u'@')
             ssh_client = paramiko.SSHClient()
             ssh_client.load_system_host_keys()
             ssh_client.set_missing_host_key_policy(paramiko.AutoAddPolicy())  # FIXME man-in-the-middle attack
             ssh_client.connect(host, username=username)
             ssh_client.exec_command(u'mkdir -p "{0}"'.format(directory))
-            rsync(source=task_outputs_directory, destination=task_outputs_remote_directory, source_is_dir=True,
+            rsync(source=outputs_directory, destination=remote_directory, source_is_dir=True,
                   destination_is_dir=True, archive=True, delete=True, progress=True, recursive=True, extra=u'ssh')
             final_state = states.SUCCESS
         except Exception as e:
             logger.exception(u'Transfer of outputs to remote host failed')
             final_state = states.TRANSFER_ERROR
-            with open(join(task_outputs_directory, u'transfer-error.log'), u'w', u'utf-8') as log:
+            with open(join(outputs_directory, u'transfer-error.log'), u'w', u'utf-8') as log:
                 log.write(repr(e))
     except:
         logger.exception(u'Transcoding task failed')
         logger.info(u'Move the input file to the failed directory and remove the outputs')
-        if in_abspath and in_relpath:
+        if in_abspath and failed_abspath:
             move(in_abspath, failed_abspath)
-        if task_outputs_directory and exists(task_outputs_directory):
-            shutil.rmtree(task_outputs_directory)
+        if outputs_directory and exists(outputs_directory):
+            shutil.rmtree(outputs_directory)
         raise
     finally:
         if report:
             report.send_report(final_state)
         logger.info(u'Remove the temporary files')
-        if task_temporary_directory and exists(task_temporary_directory):
-            shutil.rmtree(task_temporary_directory)
+        if temporary_directory and exists(temporary_directory):
+            shutil.rmtree(temporary_directory)
 
 
 @app.task(name=u'encodebox.tasks.cleanup')
@@ -148,13 +150,14 @@ def cleanup():
         delay = settings[u'completed_cleanup_delay']
         max_mtime = time.time() - delay
         removed = set()
-        for root, dirnames, filenames in os.walk(settings[u'completed_directory']):
-            for filename in filenames:
-                filename = join(root, filename)
-                if os.stat(filename).st_mtime < max_mtime:
-                    logger.info(u'Remove file older than {0} {1}'.format(secs_to_time(delay), filename))
-                    os.remove(filename)
-                    removed.add(filename)
+        for root, dirnames, filenames in os.walk(settings[u'local_directory']):
+            if basename(root) == u'completed':
+                for filename in filenames:
+                    filename = join(root, filename)
+                    if os.stat(filename).st_mtime < max_mtime:
+                        logger.info(u'Remove file older than {0} {1}'.format(secs_to_time(delay), filename))
+                        os.remove(filename)
+                        removed.add(filename)
         return removed
     except:
         logger.exception(u'Cleanup task failed')
