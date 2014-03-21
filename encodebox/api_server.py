@@ -25,11 +25,11 @@ app = Flask(__name__)
 reports = defaultdict(lambda: defaultdict(dict))
 
 
-@app.route(u'/encoding/report/<int:user_id>/<int:content_id>/<name>', methods=[u'POST'])
-def receive_encoding_report(user_id, content_id, name):
+@app.route(u'/encoding/report/<int:publisher_id>/<int:product_id>/<name>', methods=[u'POST'])
+def receive_encoding_report(publisher_id, product_id, name):
     data = get_request_data(request, sources=[u'json'])
-    reports[user_id][content_id][name] = data
-    print(user_id, content_id, name, data)
+    reports[publisher_id][product_id][name] = data
+    print(publisher_id, product_id, name, data)
     return u'Hello World!'
 
 

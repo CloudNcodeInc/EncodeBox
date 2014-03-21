@@ -25,7 +25,7 @@ from pytoolbox.subprocess import rsync
 from subprocess import check_call
 
 from . import celeryconfig, states
-from .lib import load_settings, move, passes_from_template, sanitize_filename, HD_HEIGHT
+from .lib import load_settings, move, passes_from_template, HD_HEIGHT
 from .tasks_lib import TranscodeProgressReport
 
 configure_unicode()
@@ -52,21 +52,21 @@ def transcode(in_relpath_json):
         try:
             in_directories = in_relpath.split(os.sep)
             assert(len(in_directories) == 4)
-            user_id = in_directories[0]
-            content_id = in_directories[1]
+            publisher_id = in_directories[0]
+            product_id = in_directories[1]
             assert(in_directories[2] == u'uploaded')
-            name = in_directories[3]
+            filename = in_directories[3]
         except:
-            raise ValueError(to_bytes(u'Input file path does not respect template user_id/content_id/name'))
+            raise ValueError(to_bytes(u'Input file path does not respect template publisher_id/product_id/name'))
 
-        completed_abspath = join(settings[u'local_directory'], user_id, content_id, u'completed', name)
-        failed_abspath = join(settings[u'local_directory'], user_id, content_id, u'failed', name)
-        temporary_directory = join(settings[u'local_directory'], user_id, content_id, u'temporary', name)
-        outputs_directory = join(settings[u'local_directory'], user_id, content_id, u'outputs', name)
-        remote_directory = join(settings[u'remote_directory'], user_id, content_id)
-        sanitized_name = sanitize_filename(splitext(name)[0])
+        completed_abspath = join(settings[u'local_directory'], publisher_id, product_id, u'completed', filename)
+        failed_abspath = join(settings[u'local_directory'], publisher_id, product_id, u'failed', filename)
+        temporary_directory = join(settings[u'local_directory'], publisher_id, product_id, u'temporary', filename)
+        outputs_directory = join(settings[u'local_directory'], publisher_id, product_id, u'outputs', filename)
+        remote_directory = join(settings[u'remote_directory'], publisher_id, product_id)
 
-        report = TranscodeProgressReport(settings[u'api_url'], settings[u'api_auth'], user_id, content_id, name, logger)
+        report = TranscodeProgressReport(settings[u'api_url'], settings[u'api_auth'], publisher_id, product_id,
+                                         filename, logger)
         report.send_report(states.STARTED, counter=0)
 
         logger.info(u'Create outputs directories')
@@ -87,11 +87,11 @@ def transcode(in_relpath_json):
         logger.info(u'Media {0} {1}p {2}'.format(quality.upper(), resolution[HEIGHT], in_relpath))
 
         logger.info(u'Generate SMIL file from templated SMIL file')
-        smil_filename = join(outputs_directory, sanitized_name + u'.smil')
-        from_template(template_smil_filename, smil_filename, {u'name': sanitized_name})
+        smil_filename = join(outputs_directory, filename + u'.smil')
+        from_template(template_smil_filename, smil_filename, {u'name': splitext(filename)[0]})
 
         logger.info(u'Generate transcoding passes from templated transcoding passes')
-        transcode_passes = passes_from_template(template_transcode_passes, input=in_abspath, name=sanitized_name,
+        transcode_passes = passes_from_template(template_transcode_passes, input=in_abspath, name=splitext(filename)[0],
                                                 out=outputs_directory, tmp=temporary_directory)
         report.transcode_passes = transcode_passes
 

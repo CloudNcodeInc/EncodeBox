@@ -17,19 +17,15 @@ from pytoolbox.datetime import secs_to_time
 
 class TranscodeProgressReport(object):
 
-    def __init__(self, api_url, api_auth, user_id, content_id, name, logger):
+    def __init__(self, api_url, api_auth, publisher_id, product_id, filename, logger):
         self.api_url = api_url
         self.api_auth = api_auth
-        self.user_id = user_id
-        self.content_id = content_id
-        self.name = name
+        self.publisher_id = publisher_id
+        self.product_id = product_id
+        self.filename = filename
         self.logger = logger
         self.start_time = time.time()
         self.transcode_passes = {}
-
-    @property
-    def report_url(self):
-        return u'/'.join([self.api_url, self.user_id, self.content_id, self.name])
 
     @property
     def total(self):
@@ -55,7 +51,9 @@ class TranscodeProgressReport(object):
         try:
             headers = {u'Content-type': u'application/json'}
             requests.post(self.report_url, auth=self.api_auth, headers=headers, data=json.dumps({
-                u'state': state, u'progress': task_progress, u'elapsed': task_elapsed, u'eta': task_eta
+                u'publisher_id': self.publisher_id, u'product_id': self.product_id, u'filename': self.filename,
+                u'original_size': u'TODO', u'url': u'TODO',
+                u'status': state, u'progress': task_progress, u'elapsed': task_elapsed, u'eta': task_eta,
             }))
         except:
             self.logger.exception(u'Unable to report progress')

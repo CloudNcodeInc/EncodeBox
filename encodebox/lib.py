@@ -117,11 +117,6 @@ def rabbit_vhosts():
     return re.findall(u'^([a-z]+)$', unicode(stdout), re.MULTILINE)
 
 
-def sanitize_filename(filename):
-    # FIXME implement a better filename sanitizer
-    return filename.replace(u'&', u'').replace(u'[', u'').replace(u']', u'').replace(u' ', u'_')
-
-
 def stderr_it(msg, end=u'\n', flush=True):
     sys.stdout.write(u'[ERROR] ' + msg + end)
     if flush:
