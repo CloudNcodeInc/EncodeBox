@@ -43,7 +43,6 @@ The settings file ``/etc/encodebox.yaml`` of EncodeBox permit to configure the f
 :completed_cleanup_delay: (604800) Completed files are removed if older than this delay in seconds, default means 7 days.
 :api_url: (http://127.0.0.1:5000/encoding/report) Socket to POST (API) the progress reports of the transcoding tasks.
 :api_auth: (null) Credentials to POST (API) the progress report.
-:api_smart_url: (true) Set it to embed some parameters of the progress report into the URL: ``api_url/user_id/content_id/filename``.
 :hd_smil_template: The absolute path to the template SMIL file for the HD content.
 :sd_smil_template: The absolute path to the template SMIL file for the SD content.
 :hd_transcode_passes: (a long list) The worker_ follows this list of passes (calls to encoders) to transcode the HD content.
