@@ -20,7 +20,7 @@ from subprocess import check_output
 
 HD_HEIGHT = 720
 LIB_DIRECTORY = u'/var/encodebox'
-SETTINGS_FILENAME = u'/etc/encodebox.yaml'
+SETTINGS_FILENAME = u'/etc/encodebox/config.yaml'
 USERNAME = u'www-data'  # os.getlogin()
 
 
@@ -45,6 +45,7 @@ def load_settings(filename=None, create_directories=False):
 
 
 def save_settings(filename, settings):
+    try_makedirs(dirname(filename))
     with open(filename, u'w', u'utf-8') as f:
         f.write(yaml.safe_dump(settings, default_flow_style=False))
 

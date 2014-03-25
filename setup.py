@@ -86,7 +86,7 @@ def post_install():
             try_remove(u'/tmp/nero.zip')
 
     filename = lib.SETTINGS_FILENAME
-    settings = lib.load_settings(u'etc/encodebox.yaml')
+    settings = lib.load_settings(u'etc/config.yaml')
     if not exists(filename) or confirm(u'Overwrite existing configuration file "{0}"'.format(filename)):
         print(u'Generate configuration file "{0}"'.format(filename))
         password = lib.generate_password()

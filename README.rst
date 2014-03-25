@@ -3,6 +3,7 @@
 .. _concurrency: http://celery.readthedocs.org/en/latest/userguide/concurrency/index.html
 .. _ffmpeg: http://www.ffmpeg.org/
 .. _flower: https://github.com/mher/flower
+.. _smil: http://en.wikipedia.org/wiki/Synchronized_Multimedia_Integration_Language
 .. _pip: https://pypi.python.org/pypi/pip
 .. _ppa: http://askubuntu.com/questions/4983/what-are-ppas-and-how-do-i-use-them
 .. _post: http://en.wikipedia.org/wiki/POST_(HTTP)
@@ -36,15 +37,15 @@ EncodeBox is, at time of writing this, composed of two services controlled by su
 1. The watch-folder ``daemon.py``: Launch a new transcoding task_ for each new file in the input folder.
 2. The workers_ ``tasks.py``: Detect the quality (SD/HD) of the input file and transcode to multiple output files.
 
-The settings file ``/etc/encodebox.yaml`` of EncodeBox permit to configure the following options:
+The settings file ``/etc/encodebox/config.yaml`` of EncodeBox permit to configure the following options:
 
 :local_directory: (/var/www/data) All the files managed by EncodeBox must be transfered there.
 :remote_directory: (username@host_ip:/var/www/medias) The outputs are copied to this remote directory with rsync_.
 :completed_cleanup_delay: (604800) Completed files are removed if older than this delay in seconds, default means 7 days.
 :api_url: (http://127.0.0.1:5000/encoding/report) Socket to POST (API) the progress reports of the transcoding tasks.
 :api_auth: (null) Credentials to POST (API) the progress report.
-:hd_smil_template: The absolute path to the template SMIL file for the HD content.
-:sd_smil_template: The absolute path to the template SMIL file for the SD content.
+:hd_smil_template: (/etc/encodebox/hd.smil) The absolute path to the template SMIL_ file for the HD content.
+:sd_smil_template: (/etc/encodebox/sd.smil) The absolute path to the template SMIL_ file for the SD content.
 :hd_transcode_passes: (a long list) The worker_ follows this list of passes (calls to encoders) to transcode the HD content.
 :sd_transcode_passes: (a long list) The worker_ follows this list of passes (calls to encoders) to transcode the SD content.
 
@@ -87,9 +88,9 @@ The "core" available features are:
 * The watch-folder daemon react to *IN_CLOSE_WRITE* and launch a new transcoding task_
 * The transcoding worker_ is able to :
     * Detect the resolution of the input media file
-    * Select the appropriate transcoding steps (described in the settings file ``/etc/encodebox.yaml``)
+    * Select the appropriate transcoding steps (described in the settings file ``/etc/encodebox/config.yaml``)
     * Execute the transcoding steps and update the status of the task_ to *ENCODING* + statistics
-    * Generate the SMIL file according to a template
+    * Generate the SMIL_ file according to a template
     * Remove the temporary files
     * Remove the output files in case of error
     * Update the status of the task_ to *SUCCESS* or *FAILURE* + console output of the encoder
@@ -138,7 +139,8 @@ You may also install the optional Celery_ web interface (Flower_)::
 How to configure it ?
 ---------------------
 
-* The main configuration file is ``/etc/encodebox.yaml``.
+* The main configuration file is ``/etc/encodebox/config.yaml``.
+* The
 * The workers_ configuration file is ``celeryconfig.py``.
 * The services are registered in ``/etc/supervisor/encodebox.conf``.
 
