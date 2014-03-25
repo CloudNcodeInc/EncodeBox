@@ -50,21 +50,29 @@ The settings file ``/etc/encodebox/config.yaml`` of EncodeBox permit to configur
 :hd_transcode_passes: (a long list) The worker_ follows this list of passes (calls to encoders) to transcode the HD content.
 :sd_transcode_passes: (a long list) The worker_ follows this list of passes (calls to encoders) to transcode the SD content.
 
-The transcoding workers_ will handle any input file into ``local_directory/user_id/content_id/uploaded/`` by using the following structure:
+The transcoding workers_ will handle any input file into ``local_directory/user_id/product_id/uploaded/`` by using the following structure:
 
-* The intermediate files are temporarily stored into the sub-directory ``<local_directory>/user_id/content_id/temporary/``.
-* The outputs are saved into the sub-directory ``<local_directory>/user_id/content_id/outputs/``.
-* The input file is moved into ``<local_directory>/user_id/content_id/completed/`` in case of success.
-* The input file is moved into ``<local_directory>/user_id/content_id/failed/`` in case of failure.
+* The intermediate files are temporarily stored into the sub-directory ``<local_directory>/user_id/product_id/temporary/``.
+* The outputs are saved into the sub-directory ``<local_directory>/user_id/product_id/outputs/``.
+* The input file is moved into ``<local_directory>/user_id/product_id/completed/`` in case of success.
+* The input file is moved into ``<local_directory>/user_id/product_id/failed/`` in case of failure.
 
 The transcoding workers_ will (try) to POST_ the following informations at the URL_ ``api_url``:
 
     {
+        "publisher_id": "5",
+        "product_id": "7",
+        "filename": "Abyss.mkv",
+        "original_size": 473005964,
         "state": "ENCODING",
         "progress": 0.67316,
         "elapsed": 415.329475,
-        "eta": 135
+        "eta": 135,
+        "url": null
     }
+
+**Remark**: The ``url`` key is set to the URL_ of the SMIL_ file **only** if the task succeeded, when the media asset is
+available for streaming.
 
 Following this state-machine:
 
