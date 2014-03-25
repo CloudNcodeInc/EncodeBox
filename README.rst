@@ -40,7 +40,8 @@ EncodeBox is, at time of writing this, composed of two services controlled by su
 The settings file ``/etc/encodebox/config.yaml`` of EncodeBox permit to configure the following options:
 
 :local_directory: (/var/www/data) All the files managed by EncodeBox must be transfered there.
-:remote_directory: (username@host_ip:/var/www/medias) The outputs are copied to this remote directory with rsync_.
+:remote_directory: (username@host_ip:/usr/local/WowzaStreamingEngine/content) The outputs are copied to this remote directory with rsync_.
+:remote_root_url: (http://remote_server.com/media) The remote directory is mapped to this URL.
 :completed_cleanup_delay: (604800) Completed files are removed if older than this delay in seconds, default means 7 days.
 :api_url: (http://127.0.0.1:5000/encoding/report) Socket to POST (API) the progress reports of the transcoding tasks.
 :api_auth: (null) Credentials to POST (API) the progress report.

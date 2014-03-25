@@ -32,7 +32,7 @@ class TranscodeProgressReport(object):
     def total(self):
         return len(self.transcode_passes)
 
-    def send_report(self, state, counter=None, statistics=None):
+    def send_report(self, state, url=None, counter=None, statistics=None):
         if counter is None:
             counter = self.total
         if statistics is None:
@@ -54,8 +54,7 @@ class TranscodeProgressReport(object):
             requests.post(self.api_url, auth=self.api_auth, headers=headers, data=json.dumps({
                 u'elapsed': task_elapsed, u'eta': task_eta, u'filename': self.filename,
                 u'original_size': self.original_size, u'product_id': self.product_id, u'progress': task_progress,
-                u'publisher_id': self.publisher_id, u'status': state,
-                u'url': u'The-URL-of-a-file-depends-of-the-web-server-cfg-and-the-FQDN.com/something/we/do-not/manage'
+                u'publisher_id': self.publisher_id, u'status': state, u'url': url
             }))
         except:
             self.logger.exception(u'Unable to report progress')

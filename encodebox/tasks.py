@@ -45,6 +45,7 @@ def transcode(in_relpath_json):
     temporary_directory = None
     outputs_directory = None
     final_state = states.FAILURE
+    final_url = None
     try:
         settings = load_settings()
         in_relpath = json.loads(in_relpath_json)
@@ -56,8 +57,9 @@ def transcode(in_relpath_json):
             product_id = in_directories[1]
             assert(in_directories[2] == u'uploaded')
             filename = in_directories[3]
+            name, extension = splitext(filename)
         except:
-            raise ValueError(to_bytes(u'Input file path does not respect template publisher_id/product_id/name'))
+            raise ValueError(to_bytes(u'Input file path does not respect template publisher_id/product_id/filename'))
 
         completed_abspath = join(settings[u'local_directory'], publisher_id, product_id, u'completed', filename)
         failed_abspath = join(settings[u'local_directory'], publisher_id, product_id, u'failed', filename)
@@ -86,12 +88,12 @@ def transcode(in_relpath_json):
 
         logger.info(u'Media {0} {1}p {2}'.format(quality.upper(), resolution[HEIGHT], in_relpath))
 
-        logger.info(u'Generate SMIL file from templated SMIL file')
-        smil_filename = join(outputs_directory, filename + u'.smil')
-        from_template(template_smil_filename, smil_filename, {u'name': splitext(filename)[0]})
+        logger.info(u'Generate SMIL file from template SMIL file')
+        smil_filename = name + u'.smil'
+        from_template(template_smil_filename, join(outputs_directory, smil_filename), {u'name': name})
 
         logger.info(u'Generate transcoding passes from templated transcoding passes')
-        transcode_passes = passes_from_template(template_transcode_passes, input=in_abspath, name=splitext(filename)[0],
+        transcode_passes = passes_from_template(template_transcode_passes, input=in_abspath, name=name,
                                                 out=outputs_directory, tmp=temporary_directory)
         report.transcode_passes = transcode_passes
 
@@ -127,6 +129,7 @@ def transcode(in_relpath_json):
             rsync(source=outputs_directory, destination=remote_directory, source_is_dir=True, destination_is_dir=True,
                   archive=True, delete=True, progress=True, recursive=True, extra=u'ssh')
             final_state = states.SUCCESS
+            final_url = u'/'.join(settings[u'remote_root_url'], publisher_id, product_id, smil_filename)
         except Exception as e:
             logger.exception(u'Transfer of outputs to remote host failed')
             final_state = states.TRANSFER_ERROR
@@ -142,7 +145,7 @@ def transcode(in_relpath_json):
         raise
     finally:
         if report:
-            report.send_report(final_state)
+            report.send_report(final_state, url=final_url)
         logger.info(u'Remove the temporary files')
         if temporary_directory and exists(temporary_directory):
             shutil.rmtree(temporary_directory)
