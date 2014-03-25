@@ -87,7 +87,7 @@ Following this state-machine:
 State of the project
 --------------------
 
-The project is currently a beta release that implement the complex encoding workflow trigerred for each new file in the
+This project is currently a beta release that implement the complex encoding workflow trigerred for each new file in the
 inputs directory. The transcoding worker_ is now able to parse both the output of FFmpeg_ and x264_ to retrieve the
 statistics like *ETA, fps, progress %*, ... It means that we can report a *PROGRESS* status with both the current pass
 (e.g. 4 of 14) and the statistics about the current pass.
@@ -107,12 +107,12 @@ The "core" available features are:
     * Copy the output files to the remote streaming server
 * The periodic cleanup task_ remove completed files older than 7 days
 
-The "extra" available features are:
+Some "extra" are also available to help developers:
 
 * The test API_ server to collect progress of the transcoding tasks_ for debugging purposes.
 * The test API_ client reporting the progress of the transcoding tasks_ by calling the test API_ server.
 
-The "core" missing features are:
+Some "core" features are also not yet implemented:
 
 * The watch-folder does not revoke_/relaunch tasks_ if the input files are removed or updated during transcoding (issue #13)
 
@@ -149,7 +149,7 @@ How to configure it ?
 ---------------------
 
 * The main configuration file is ``/etc/encodebox/config.yaml``.
-* The
+* The template SMIL_ files are ``/etc/encodebox/{sd.smil,hd.smil}``.
 * The workers_ configuration file is ``celeryconfig.py``.
 * The services are registered in ``/etc/supervisor/encodebox.conf``.
 
@@ -180,11 +180,11 @@ Start the optional Celery_ web interface (Flower_)::
 
 Start the optional test API server::
 
-    python -m encodebox.api_server
+    screen -dmS api_server python -m encodebox.api_server
 
 Use the test API client to get progress of the transcoding tasks_::
 
-    python -m encodebox.api_client
+    watch python -m encodebox.api_client
 
 A typical testing scenario:
 
