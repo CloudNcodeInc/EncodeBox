@@ -17,12 +17,13 @@ from pytoolbox.datetime import secs_to_time
 
 class TranscodeProgressReport(object):
 
-    def __init__(self, api_url, api_auth, publisher_id, product_id, filename, logger):
+    def __init__(self, api_url, api_auth, publisher_id, product_id, filename, original_size, logger):
         self.api_url = api_url
         self.api_auth = api_auth
         self.publisher_id = publisher_id
         self.product_id = product_id
         self.filename = filename
+        self.original_size = original_size
         self.logger = logger
         self.start_time = time.time()
         self.transcode_passes = {}
@@ -50,10 +51,11 @@ class TranscodeProgressReport(object):
                          pass_fps=statistics.get(u'fps', 0)))
         try:
             headers = {u'Content-type': u'application/json'}
-            requests.post(self.report_url, auth=self.api_auth, headers=headers, data=json.dumps({
-                u'publisher_id': self.publisher_id, u'product_id': self.product_id, u'filename': self.filename,
-                u'original_size': u'TODO', u'url': u'TODO',
-                u'status': state, u'progress': task_progress, u'elapsed': task_elapsed, u'eta': task_eta,
+            requests.post(self.api_url, auth=self.api_auth, headers=headers, data=json.dumps({
+                u'elapsed': task_elapsed, u'eta': task_eta, u'filename': self.filename,
+                u'original_size': self.original_size, u'product_id': self.product_id, u'progress': task_progress,
+                u'publisher_id': self.publisher_id, u'status': state,
+                u'url': u'The-URL-of-a-file-depends-of-the-web-server-cfg-and-the-FQDN.com/something/we/do-not/manage'
             }))
         except:
             self.logger.exception(u'Unable to report progress')

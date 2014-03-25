@@ -15,7 +15,7 @@ import json, paramiko, os, shutil, time
 from celery import Celery
 from celery.utils.log import get_task_logger
 from codecs import open
-from os.path import basename, exists, join, splitext
+from os.path import basename, exists, getsize, join, splitext
 from pytoolbox import ffmpeg, x264  # For the line with encoder_module to work!
 from pytoolbox.datetime import secs_to_time
 from pytoolbox.encoding import configure_unicode, to_bytes
@@ -66,7 +66,7 @@ def transcode(in_relpath_json):
         remote_directory = join(settings[u'remote_directory'], publisher_id, product_id)
 
         report = TranscodeProgressReport(settings[u'api_url'], settings[u'api_auth'], publisher_id, product_id,
-                                         filename, logger)
+                                         filename, getsize(in_abspath), logger)
         report.send_report(states.STARTED, counter=0)
 
         logger.info(u'Create outputs directories')
