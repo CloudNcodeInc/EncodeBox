@@ -47,8 +47,8 @@ CELERY_TASK_SERIALIZER = u'json'
 from datetime import timedelta
 
 CELERYBEAT_SCHEDULE = {
-    u'cleanup-every-minutes': {
+    u'cleanup-every-10-minutes': {
         u'task': 'encodebox.tasks.cleanup',
-        u'schedule': timedelta(minutes=1)
+        u'schedule': timedelta(minutes=10)
     },
 }
