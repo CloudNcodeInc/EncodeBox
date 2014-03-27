@@ -71,7 +71,7 @@ The transcoding workers_ will (try) to POST_ the following informations at the U
         "url": null
     }
 
-**Remark**: The ``url`` key is set to the URL_ of the SMIL_ file **only** if the task succeeded, when the media asset is
+**Remark**: The ``url`` key is set to the URL_ ``remote_url`` **only** if the task succeeded, when the media asset is
 available for streaming.
 
 Following this state-machine:
