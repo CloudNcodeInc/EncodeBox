@@ -125,7 +125,7 @@ call_hook(u'pre_' + action)
 
 setup(
     name=u'encodebox',
-    version=u'0.7.0-beta',
+    version=u'0.8.0-beta',
     packages=find_packages(exclude=[u'tests']),
     description=u'Transcoding watchfolder called EncodeBox',
     long_description=open(u'README.rst', u'r', encoding=u'utf-8').read(),

@@ -1,6 +1,6 @@
 local_directory: /var/www/data
 remote_directory: username@host_ip:/usr/local/WowzaStreamingEngine/content
-remote_root_url: http://remote_server.com/media
+remote_url: 'http://host_ip:1935/vod/content/{publisher_id}/{product_id}/smil:{name}.smil/Manifest'
 completed_cleanup_delay: 604800
 api_url: http://127.0.0.1:5000/encoding/report
 api_auth: null

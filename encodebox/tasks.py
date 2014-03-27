@@ -66,7 +66,7 @@ def transcode(in_relpath_json):
         temporary_directory = join(settings[u'local_directory'], publisher_id, product_id, u'temporary', filename)
         outputs_directory = join(settings[u'local_directory'], publisher_id, product_id, u'outputs', filename)
         remote_directory = join(settings[u'remote_directory'], publisher_id, product_id)
-        remote_url = u'/'.join([settings[u'remote_root_url'], publisher_id, product_id])
+        remote_url = settings[u'remote_url'].format(publisher_id=publisher_id, product_id=product_id, name=name)
 
         report = TranscodeProgressReport(settings[u'api_url'], settings[u'api_auth'], publisher_id, product_id,
                                          filename, getsize(in_abspath), logger)
@@ -90,8 +90,7 @@ def transcode(in_relpath_json):
         logger.info(u'Media {0} {1}p {2}'.format(quality.upper(), resolution[HEIGHT], in_relpath))
 
         logger.info(u'Generate SMIL file from template SMIL file')
-        smil_filename, smil_url = join(outputs_directory, name + u'.smil'), u'/'.join([remote_url, name + u'.smil'])
-        from_template(template_smil_filename, smil_filename, {u'name': name})
+        from_template(template_smil_filename, join(outputs_directory, name + u'.smil'), {u'name': name})
 
         logger.info(u'Generate transcoding passes from templated transcoding passes')
         transcode_passes = passes_from_template(template_transcode_passes, input=in_abspath, name=name,
@@ -129,7 +128,7 @@ def transcode(in_relpath_json):
             ssh_client.exec_command(u'mkdir -p "{0}"'.format(directory))
             rsync(source=outputs_directory, destination=remote_directory, source_is_dir=True, destination_is_dir=True,
                   archive=True, delete=True, progress=True, recursive=True, extra=u'ssh')
-            final_state, final_url = states.SUCCESS, smil_url
+            final_state, final_url = states.SUCCESS, remote_url
         except Exception as e:
             logger.exception(u'Transfer of outputs to remote host failed')
             final_state = states.TRANSFER_ERROR
