@@ -7,7 +7,7 @@ u"""
     Run the integration tests of EncodeBox.
 
     :author: David Fischer <david.fischer.ch@gmail.com>
-    :copyright: (c) 2014 <TODO Company> Inc. All rights reserved.
+    :copyright: (c) 2014 CloudNcode Inc. All rights reserved.
 """
 
 

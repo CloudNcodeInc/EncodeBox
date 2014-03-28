@@ -7,7 +7,7 @@ u"""
     Daemon of the EncodeBox launching a new transcoding task for every media asset detected in the input directory.
 
     :author: David Fischer <david.fischer.ch@gmail.com>
-    :copyright: (c) 2014 <TODO Company> Inc. All rights reserved.
+    :copyright: (c) 2014 CloudNcode Inc. All rights reserved.
 """
 
 from __future__ import absolute_import, division, print_function, unicode_literals

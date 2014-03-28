@@ -7,7 +7,7 @@ u"""
     Install EncodeBox on the system.
 
     :author: David Fischer <david.fischer.ch@gmail.com>
-    :copyright: (c) 2014 <TODO Company> Inc. All rights reserved.
+    :copyright: (c) 2014 CloudNcode Inc. All rights reserved.
 """
 
 from __future__ import absolute_import, division, print_function, unicode_literals
@@ -24,6 +24,7 @@ kwargs = {}
 if major >= 3:
     print(u'Converting code to Python 3 helped by 2to3')
     kwargs[u'use_2to3'] = True
+    raise NotImplementedError(u'EncodeBox does not officially supports Python 3.')
 
 # https://pypi.python.org/pypi?%3Aaction=list_classifiers
 
@@ -35,12 +36,9 @@ Natural Language :: English
 Operating System :: POSIX :: Linux
 Programming Language :: Python
 Programming Language :: Python :: 2
-Programming Language :: Python :: 2.6
 Programming Language :: Python :: 2.7
-Programming Language :: Python :: 3
-Programming Language :: Python :: 3.2
-Programming Language :: Python :: 3.3
 Programming Language :: Python :: Implementation :: CPython
+Topic :: Adaptive Technologies
 Topic :: Multimedia :: Sound/Audio :: Conversion
 """
 
@@ -129,10 +127,10 @@ setup(
     packages=find_packages(exclude=[u'tests']),
     description=u'Transcoding watchfolder called EncodeBox',
     long_description=open(u'README.rst', u'r', encoding=u'utf-8').read(),
-    author=u'David Fischer',
+    author=u'David Fischer @ CloudNcode Inc.',
     author_email=u'david.fischer.ch@gmail.com',
-    #url='<TODO address of the repository>',
-    license=u'(c) 2014 <TODO Company> Inc. All rights reserved.',
+    url='https://bitbucket.org/cloudncode/encodebox',
+    license=u'(c) 2014 CloudNcode Inc. All rights reserved.',
     classifiers=filter(None, classifiers.split(u'\n')),
     keywords=[u'ffmpeg', u'json', u'rsync'],
     include_package_data=True,
