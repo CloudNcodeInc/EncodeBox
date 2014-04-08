@@ -127,7 +127,7 @@ def transcode(in_relpath_json):
             ssh_client.connect(host, username=username)
             ssh_client.exec_command(u'mkdir -p "{0}"'.format(directory))
             rsync(source=outputs_directory, destination=remote_directory, source_is_dir=True, destination_is_dir=True,
-                  archive=True, delete=True, progress=True, recursive=True, extra=u'ssh')
+                  archive=True, progress=True, recursive=True, extra=u'ssh')
             final_state, final_url = states.SUCCESS, remote_url
         except Exception as e:
             logger.exception(u'Transfer of outputs to remote host failed')
