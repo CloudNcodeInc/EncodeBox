@@ -11,7 +11,7 @@ u"""
 
 from __future__ import absolute_import, division, print_function, unicode_literals
 
-import os, random, re, shlex, shutil, string, sys, yaml
+import hashlib, os, random, re, shlex, shutil, string, sys, yaml
 from codecs import open
 from os.path import abspath, dirname, exists, expanduser
 from pytoolbox.encoding import string_types, to_bytes
@@ -27,6 +27,13 @@ USERNAME = u'www-data'  # os.getlogin()
 def generate_password(chars=None, size=16):
     chars = chars or string.ascii_letters + string.digits
     return u''.join(random.choice(chars) for i in xrange(size))
+
+
+def generate_unguessable_filename(seed, filename):
+    m = hashlib.sha1()
+    m.update(seed)
+    m.update(filename)
+    return m.hexdigest()
 
 
 def load_settings(filename=None, create_directories=False):

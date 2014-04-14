@@ -25,7 +25,7 @@ from pytoolbox.subprocess import rsync
 from subprocess import check_call
 
 from . import celeryconfig, states
-from .lib import load_settings, move, passes_from_template, HD_HEIGHT
+from .lib import generate_unguessable_filename, load_settings, move, passes_from_template, HD_HEIGHT
 from .tasks_lib import TranscodeProgressReport
 
 configure_unicode()
@@ -60,6 +60,9 @@ def transcode(in_relpath_json):
             name, extension = splitext(filename)
         except:
             raise ValueError(to_bytes(u'Input file path does not respect template publisher_id/product_id/filename'))
+
+        # Generate a unguessable filename using a seed and the original filename
+        name = generate_unguessable_filename(settings[u'filenames_seed'], filename)
 
         completed_abspath = join(settings[u'local_directory'], publisher_id, product_id, u'completed', filename)
         failed_abspath = join(settings[u'local_directory'], publisher_id, product_id, u'failed', filename)

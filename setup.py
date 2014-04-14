@@ -113,12 +113,6 @@ def post_install():
     call([u'service', u'supervisor', u'force-reload'])
 
 
-def pre_livetest():
-    from tests import encodebox_livetests
-    encodebox_livetests.main()
-    sys.exit(0)
-
-
 call_hook(u'pre_' + action)
 
 setup(

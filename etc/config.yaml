@@ -1,3 +1,4 @@
+filenames_seed: 499Qm1NKiZmYYE5Q
 local_directory: /var/www/data
 remote_directory: username@host_ip:/usr/local/WowzaStreamingEngine/content
 remote_url: 'http://host_ip:1935/vod/content/{publisher_id}/{product_id}/smil:{name}.smil/Manifest'

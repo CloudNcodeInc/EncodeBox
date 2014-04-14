@@ -39,6 +39,7 @@ EncodeBox is, at time of writing this, composed of two services controlled by su
 
 The settings file ``/etc/encodebox/config.yaml`` of EncodeBox permit to configure the following options:
 
+:filenames_seed: (filenames_seed) The seed for the function generating unguessable filenames.
 :local_directory: (/var/www/data) All the files managed by EncodeBox must be transfered there.
 :remote_directory: (username@host_ip:/usr/local/WowzaStreamingEngine/content) The outputs are copied to this remote directory with rsync_.
 :remote_url: (http://host_ip:1935/vod/content/{publisher_id}/{product_id}/smil:{name}.smil/Manifest) The Wowza player use this kind of URL, so here is the template.
