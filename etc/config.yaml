@@ -1,12 +1,8 @@
-filenames_seed: 499Qm1NKiZmYYE5Q
-local_directory: /var/www/data
-remote_directory: username@host_ip:/usr/local/WowzaStreamingEngine/content
-remote_url: 'http://host_ip:1935/vod/content/{publisher_id}/{product_id}/smil:{name}.smil/Manifest'
-completed_cleanup_delay: 604800
-api_url: http://127.0.0.1:5000/encoding/report
 api_auth: null
+api_url: http://127.0.0.1:5000/encoding/report
+completed_cleanup_delay: 604800
+filenames_seed: 499Qm1NKiZmYYE5Q
 hd_smil_template: /etc/encodebox/hd.smil
-sd_smil_template: /etc/encodebox/sd.smil
 hd_transcode_passes:
 - - ffmpeg
   - '{input}'
@@ -61,6 +57,10 @@ hd_transcode_passes:
   - ['{tmp}/v.h264', '{tmp}/a.mp4']
   - '{out}/{name}_400.mp4'
   - '-vcodec copy -acodec copy'
+local_directory: /var/www/data
+remote_directory: username@host_ip:/usr/local/WowzaStreamingEngine/content
+remote_url: 'http://host_ip:1935/vod/content/{publisher_id}/{product_id}/smil:{name}.smil/Manifest'
+sd_smil_template: /etc/encodebox/sd.smil
 sd_transcode_passes:
 - - ffmpeg
   - '{input}'
