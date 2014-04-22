@@ -11,7 +11,7 @@ u"""
 
 from __future__ import absolute_import, division, print_function, unicode_literals
 
-import errno, json, logging, mock, os, shutil
+import errno, json, logging.config, mock, os, shutil
 from codecs import open
 from os.path import basename, dirname, exists, join
 from nose.tools import ok_
