@@ -15,7 +15,6 @@ import errno, json, mock, os, shutil
 from codecs import open
 from os.path import basename, dirname, exists, join
 from nose.tools import ok_
-from pytoolbox.console import confirm
 from pytoolbox.filesystem import try_makedirs, try_remove
 from pytoolbox.network.http import download
 
@@ -92,5 +91,3 @@ class TestTranscodeTasks(object):
                 ok_(self.is_empty(join(LOCAL_DIRECTORY, '2', index, 'failed')))
                 ok_(self.is_empty(join(LOCAL_DIRECTORY, '2', index, 'uploaded')))
                 ok_(exists(join(REMOTE_DIRECTORY, '2', index, unguessable + '.smil')))
-        if confirm('Remove remote directory', default=True):
-            shutil.rmtree(REMOTE_DIRECTORY)
