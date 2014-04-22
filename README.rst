@@ -10,6 +10,7 @@
 .. _rabbitmq: https://www.rabbitmq.com/
 .. _revoke: http://celery.readthedocs.org/en/latest/userguide/workers.html#revoking-tasks
 .. _rsync: http://rsync.samba.org/
+.. _smtp: http://fr.wikipedia.org/wiki/Simple_Mail_Transfer_Protocol
 .. _supervisor: http://supervisord.org/
 .. _task: http://celery.readthedocs.org/en/latest/userguide/tasks.html
 .. _tasks: http://celery.readthedocs.org/en/latest/userguide/tasks.html
@@ -41,11 +42,16 @@ The settings file ``/etc/encodebox/config.yaml`` of EncodeBox permit to configur
 
 :filenames_seed: (filenames_seed) The seed for the function generating unguessable filenames.
 :local_directory: (/var/www/data) All the files managed by EncodeBox must be transfered there.
-:remote_directory: (username@host_ip:/usr/local/WowzaStreamingEngine/content) The outputs are copied to this remote directory with rsync_.
+:remote_directory: (username@host_ip:/usr/local/WowzaStreamingEngine/content) The outputs are copied to this directory with rsync_. Can be remote or local.
 :remote_url: (http://host_ip:1935/vod/content/{publisher_id}/{product_id}/smil:{name}.smil/Manifest) The Wowza player use this kind of URL, so here is the template.
 :completed_cleanup_delay: (604800) Completed files are removed if older than this delay in seconds, default means 7 days.
 :api_url: (http://127.0.0.1:5000/encoding/report) Socket to POST (API) the progress reports of the transcoding tasks.
 :api_auth: (null) Credentials to POST (API) the progress report.
+:email_body: (/etc/encodebox/email_body.j2) The template used to generate the body of the error report.
+:email_host: (smtp.gmail.com) The SMTP_ host to send the e-mail messages.
+:email_username: (encodebox.test@gmail.com) The username of the mailbox used to send the e-mail messages.
+:email_password: (1**************e) The password of the mailbox used to send the e-mail messages.
+:email_recipients: (['aaron@sigalamedia.com', 'david.fischer.ch@gmail.com']) Recipients for the error reports. Set to null to disable this feature.
 :hd_smil_template: (/etc/encodebox/hd.smil) The absolute path to the template SMIL_ file for the HD content.
 :sd_smil_template: (/etc/encodebox/sd.smil) The absolute path to the template SMIL_ file for the SD content.
 :hd_transcode_passes: (a long list) The worker_ follows this list of passes (calls to encoders) to transcode the HD content.

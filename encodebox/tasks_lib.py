@@ -65,7 +65,9 @@ class TranscodeProgressReport(object):
 
 
 def send_error_email(exception, filename, settings, subject=u'[EncodeBox] Transcoding task failed'):
-    template = Template(open(settings[u'email_body'], u'r', u'utf-8').read())
-    message = template.render(exception=repr(exception), filename=filename, settings=settings)
-    return send_email(settings[u'email_host'], settings[u'email_username'], settings[u'email_password'],
-                      settings[u'email_recipients'], subject, message)
+    recipients = settings['email_recipients']
+    if recipients:
+        template = Template(open(settings[u'email_body'], u'r', u'utf-8').read())
+        message = template.render(exception=repr(exception), filename=filename, settings=settings)
+        return send_email(settings[u'email_host'], settings[u'email_username'], settings[u'email_password'], recipients,
+                          subject, message)

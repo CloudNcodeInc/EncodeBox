@@ -122,15 +122,21 @@ def transcode(in_relpath_json):
         move(in_abspath, completed_abspath)
         try:
             report.send_report(states.TRANSFERRING)
-            username_host, directory = remote_directory.split(u':')
-            username, host = username_host.split(u'@')
-            ssh_client = paramiko.SSHClient()
-            ssh_client.load_system_host_keys()
-            ssh_client.set_missing_host_key_policy(paramiko.AutoAddPolicy())  # FIXME man-in-the-middle attack
-            ssh_client.connect(host, username=username)
-            ssh_client.exec_command(u'mkdir -p "{0}"'.format(directory))
+            is_remote = u':' in remote_directory
+            if is_remote:
+                # Create directory in remote host
+                username_host, directory = remote_directory.split(u':')
+                username, host = username_host.split(u'@')
+                ssh_client = paramiko.SSHClient()
+                ssh_client.load_system_host_keys()
+                ssh_client.set_missing_host_key_policy(paramiko.AutoAddPolicy())  # FIXME man-in-the-middle attack
+                ssh_client.connect(host, username=username)
+                ssh_client.exec_command(u'mkdir -p "{0}"'.format(directory))
+            else:
+                # Create directory in local host
+                try_makedirs(remote_directory)
             rsync(source=outputs_directory, destination=remote_directory, source_is_dir=True, destination_is_dir=True,
-                  archive=True, progress=True, recursive=True, extra=u'ssh')
+                  archive=True, progress=True, recursive=True, extra=u'ssh' if is_remote else None)
             final_state, final_url = states.SUCCESS, remote_url
         except Exception as e:
             logger.exception(u'Transfer of outputs to remote host failed')
