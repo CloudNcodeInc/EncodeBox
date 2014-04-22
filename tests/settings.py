@@ -12,12 +12,11 @@ u"""
 
 from __future__ import absolute_import, division, print_function, unicode_literals
 
-import os, tempfile, yaml
+import os, yaml
 from os.path import abspath, dirname, join, normpath
 from encodebox.lib import save_settings
 
 TEST_DIRECTORY = abspath(dirname(__file__))
-CACHE_DIRECTORY = join(tempfile.gettempdir(), u'encodebox')
 CONFIG_DIRECTORY = normpath(join(TEST_DIRECTORY, u'..', u'etc'))
 LOCAL_DIRECTORY = join(TEST_DIRECTORY, u'local')
 MEDIA_DIRECTORY = normpath(join(TEST_DIRECTORY, u'..', u'media'))

@@ -15,27 +15,25 @@ import errno, json, mock, os, shutil
 from codecs import open
 from os.path import basename, dirname, exists, join
 from nose.tools import ok_
+from pytoolbox.console import confirm
 from pytoolbox.filesystem import try_makedirs, try_remove
 from pytoolbox.network.http import download
 
 from encodebox.lib import generate_unguessable_filename
 
-from .settings import (
-    set_test_settings, CACHE_DIRECTORY, MEDIA_DIRECTORY, LOCAL_DIRECTORY, REMOTE_DIRECTORY, SETTINGS, SETTINGS_FILENAME
-)
+from .settings import set_test_settings, MEDIA_DIRECTORY, LOCAL_DIRECTORY, REMOTE_DIRECTORY, SETTINGS, SETTINGS_FILENAME
 
 
 class TestTranscodeTasks(object):
 
     def setUp(self):
         set_test_settings()
-        for directory in (CACHE_DIRECTORY, LOCAL_DIRECTORY, REMOTE_DIRECTORY):
+        for directory in (LOCAL_DIRECTORY, REMOTE_DIRECTORY):
             try_makedirs(directory)
 
     def tearDown(self):
         try_remove(SETTINGS_FILENAME)
         shutil.rmtree(LOCAL_DIRECTORY)
-        #shutil.rmtree(REMOTE_DIRECTORY)
 
     def is_empty(self, directory):
         try:
@@ -75,8 +73,9 @@ class TestTranscodeTasks(object):
             ok_(self.is_empty(join(LOCAL_DIRECTORY, '1/2/failed')))
             ok_(self.is_empty(join(LOCAL_DIRECTORY, '1/2/uploaded')))
             ok_(exists(join(REMOTE_DIRECTORY, '1/2', unguessable + '.smil')))
+        shutil.rmtree(REMOTE_DIRECTORY)
 
-    def test_transcode_media_assets(self):
+    def test_transcode_the_media_assets(self):
         with mock.patch('encodebox.celeryconfig.CELERY_ALWAYS_EAGER', True, create=True):
             from encodebox import tasks
             media_filenames = sorted(f for f in os.listdir(MEDIA_DIRECTORY) if not f.startswith('.git'))
@@ -93,3 +92,5 @@ class TestTranscodeTasks(object):
                 ok_(self.is_empty(join(LOCAL_DIRECTORY, '2', index, 'failed')))
                 ok_(self.is_empty(join(LOCAL_DIRECTORY, '2', index, 'uploaded')))
                 ok_(exists(join(REMOTE_DIRECTORY, '2', index, unguessable + '.smil')))
+        if confirm('Remove remote directory', default=True):
+            shutil.rmtree(REMOTE_DIRECTORY)
