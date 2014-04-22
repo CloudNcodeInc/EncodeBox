@@ -11,7 +11,7 @@ u"""
 
 from __future__ import absolute_import, division, print_function, unicode_literals
 
-import errno, json, mock, os, shutil
+import errno, json, logging, mock, os, shutil
 from codecs import open
 from os.path import basename, dirname, exists, join
 from nose.tools import ok_
@@ -33,6 +33,14 @@ class TestTranscodeTasks(object):
         set_test_settings()
         for directory in (LOCAL_DIRECTORY, REMOTE_DIRECTORY):
             try_makedirs(directory)
+
+        logging.config.dictConfig({
+            'version': 1,
+            'disable_existing_loggers': True,
+            'formatters': {'simple': {'format': '%(levelname)s %(message)s'}},
+            'handlers': {'console': {'level': 'DEBUG', 'class': 'logging.StreamHandler', 'formatter': 'simple'}},
+            'loggers': {'encodebox.tasks.transcode': {'handlers': ['console'], 'propagate': True, 'level': 'DEBUG'}}
+        })
 
     def tearDown(self):
         try_remove(SETTINGS_FILENAME)
