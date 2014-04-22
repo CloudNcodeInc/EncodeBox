@@ -3,7 +3,7 @@
 # Base Application of the CloudNcode SaaS Transcoding Platform
 # Retrieved from https://bitbucket.org/cloudncode/cloudncode.git
 u"""
-    Test the tasks of the CloudNcode base application.
+    Test the cleanup task of the CloudNcode base application.
 
     :author: David Fischer <david.fischer.ch@gmail.com>
     :copyright: (c) 2014 CloudNcode Inc. All rights reserved.
@@ -19,7 +19,7 @@ from pytoolbox.filesystem import try_makedirs, try_remove
 from .settings import set_test_settings, LOCAL_DIRECTORY, COMPLETED_FILES, OTHER_FILES, SETTINGS_FILENAME
 
 
-class TestTasks(object):
+class TestCleanupTasks(object):
 
     def setUp(self):
         set_test_settings()

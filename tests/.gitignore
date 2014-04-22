@@ -1,3 +1,5 @@
 .coverage
 cover/
+local/
+remote/
 settings.yaml

@@ -12,23 +12,33 @@ u"""
 
 from __future__ import absolute_import, division, print_function, unicode_literals
 
-import os
-from os.path import abspath, dirname, join
+import os, tempfile, yaml
+from os.path import abspath, dirname, join, normpath
 from encodebox.lib import save_settings
 
 TEST_DIRECTORY = abspath(dirname(__file__))
+CACHE_DIRECTORY = join(tempfile.gettempdir(), u'encodebox')
+CONFIG_DIRECTORY = normpath(join(TEST_DIRECTORY, u'..', u'etc'))
 LOCAL_DIRECTORY = join(TEST_DIRECTORY, u'local')
+MEDIA_DIRECTORY = normpath(join(TEST_DIRECTORY, u'..', u'media'))
+REMOTE_DIRECTORY = join(TEST_DIRECTORY, u'remote')
 DIRECTORIES = (u'a/b/c', u'd/e/f/g', u'h')
 
 COMPLETED_FILES = [join(LOCAL_DIRECTORY, d, u'completed', u'file.txt') for d in DIRECTORIES]
 OTHER_FILES = [join(LOCAL_DIRECTORY, d, u'other', u'file.txt') for d in DIRECTORIES]
 
 SETTINGS_FILENAME = join(TEST_DIRECTORY, u'settings.yaml')
-SETTINGS = {
-    u'local_directory': LOCAL_DIRECTORY,
+SETTINGS = yaml.load(open(join(CONFIG_DIRECTORY, 'config.yaml')).read())
+SETTINGS.update({
+    u'api_servers': None,
+    u'email_recipients': None,
     u'completed_cleanup_delay': 1,
+    u'local_directory': LOCAL_DIRECTORY,
+    u'remote_directory': REMOTE_DIRECTORY,
+    u'hd_smil_template': join(CONFIG_DIRECTORY, u'hd.smil'),
+    u'sd_smil_template': join(CONFIG_DIRECTORY, u'sd.smil'),
     u'rabbit_password': u'password'
-}
+})
 
 
 def set_test_settings():
