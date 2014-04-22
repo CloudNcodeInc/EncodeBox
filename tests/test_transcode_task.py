@@ -17,10 +17,14 @@ from os.path import basename, dirname, exists, join
 from nose.tools import ok_
 from pytoolbox.filesystem import try_makedirs, try_remove
 from pytoolbox.network.http import download
+from pytoolbox.subprocess import rsync
 
 from encodebox.lib import generate_unguessable_filename
 
-from .settings import set_test_settings, MEDIA_DIRECTORY, LOCAL_DIRECTORY, REMOTE_DIRECTORY, SETTINGS, SETTINGS_FILENAME
+from .settings import (
+    set_test_settings, MEDIA_INPUTS_DIRECTORY, MEDIA_REMOTE_DIRECTORY, LOCAL_DIRECTORY, REMOTE_DIRECTORY, SETTINGS,
+    SETTINGS_FILENAME
+)
 
 
 class TestTranscodeTasks(object):
@@ -33,6 +37,7 @@ class TestTranscodeTasks(object):
     def tearDown(self):
         try_remove(SETTINGS_FILENAME)
         shutil.rmtree(LOCAL_DIRECTORY)
+        shutil.rmtree(REMOTE_DIRECTORY)
 
     def is_empty(self, directory):
         try:
@@ -72,22 +77,22 @@ class TestTranscodeTasks(object):
             ok_(self.is_empty(join(LOCAL_DIRECTORY, '1/2/failed')))
             ok_(self.is_empty(join(LOCAL_DIRECTORY, '1/2/uploaded')))
             ok_(exists(join(REMOTE_DIRECTORY, '1/2', unguessable + '.smil')))
-        shutil.rmtree(REMOTE_DIRECTORY)
 
     def test_transcode_the_media_assets(self):
         with mock.patch('encodebox.celeryconfig.CELERY_ALWAYS_EAGER', True, create=True):
             from encodebox import tasks
-            media_filenames = sorted(f for f in os.listdir(MEDIA_DIRECTORY) if not f.startswith('.git'))
+            media_filenames = sorted(f for f in os.listdir(MEDIA_INPUTS_DIRECTORY) if not f.startswith('.git'))
             for index, filename in enumerate(media_filenames, 1):
-                name = basename(filename)
-                index = unicode(index)
+                index, name = unicode(index), basename(filename)
                 in_relpath = join('2', index, 'uploaded', name)
                 in_abspath = join(LOCAL_DIRECTORY, in_relpath)
                 unguessable = generate_unguessable_filename(SETTINGS['filenames_seed'], name)
                 try_makedirs(dirname(in_abspath))
-                shutil.copy(join(MEDIA_DIRECTORY, filename), in_abspath)
+                shutil.copy(join(MEDIA_INPUTS_DIRECTORY, filename), in_abspath)
                 tasks.transcode(json.dumps(in_relpath))
                 ok_(exists(join(LOCAL_DIRECTORY, '2', index, 'completed', name)))
                 ok_(self.is_empty(join(LOCAL_DIRECTORY, '2', index, 'failed')))
                 ok_(self.is_empty(join(LOCAL_DIRECTORY, '2', index, 'uploaded')))
                 ok_(exists(join(REMOTE_DIRECTORY, '2', index, unguessable + '.smil')))
+                rsync(source=join(REMOTE_DIRECTORY, '2', index), destination=join(MEDIA_REMOTE_DIRECTORY, filename),
+                      destination_is_dir=True, archive=True, delete=True, makedest=True, recursive=True)

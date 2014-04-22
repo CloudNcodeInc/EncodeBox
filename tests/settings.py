@@ -20,6 +20,8 @@ TEST_DIRECTORY = abspath(dirname(__file__))
 CONFIG_DIRECTORY = normpath(join(TEST_DIRECTORY, u'..', u'etc'))
 LOCAL_DIRECTORY = join(TEST_DIRECTORY, u'local')
 MEDIA_DIRECTORY = normpath(join(TEST_DIRECTORY, u'..', u'media'))
+MEDIA_INPUTS_DIRECTORY = join(MEDIA_DIRECTORY, u'inputs')
+MEDIA_REMOTE_DIRECTORY = join(MEDIA_DIRECTORY, u'remote')
 REMOTE_DIRECTORY = join(TEST_DIRECTORY, u'remote')
 DIRECTORIES = (u'a/b/c', u'd/e/f/g', u'h')
 
