@@ -71,7 +71,7 @@ def transcode(in_relpath_json):
         remote_directory = join(settings[u'remote_directory'], publisher_id, product_id)
         remote_url = settings[u'remote_url'].format(publisher_id=publisher_id, product_id=product_id, name=name)
 
-        report = TranscodeProgressReport(settings[u'api_hosts'], publisher_id, product_id, filename,
+        report = TranscodeProgressReport(settings[u'api_servers'], publisher_id, product_id, filename,
                                          getsize(in_abspath), logger)
         report.send_report(states.STARTED, counter=0)
 
