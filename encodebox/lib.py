@@ -11,8 +11,9 @@ u"""
 
 from __future__ import absolute_import, division, print_function, unicode_literals
 
-import hashlib, os, random, re, shlex, shutil, string, sys, yaml
+import hashlib, os, random, re, shlex, shutil, smtplib, string, sys, yaml
 from codecs import open
+from email.MIMEText import MIMEText
 from os.path import abspath, dirname, exists, expanduser
 from pytoolbox.encoding import string_types, to_bytes
 from pytoolbox.filesystem import try_makedirs
@@ -123,6 +124,17 @@ def rabbit_users():
 def rabbit_vhosts():
     stdout = check_output([u'rabbitmqctl', u'list_vhosts'])
     return re.findall(u'^([a-z]+)$', unicode(stdout), re.MULTILINE)
+
+
+def send_email(host, username, password, recipients, subject, message, sender=None):
+    mailbox = smtplib.SMTP_SSL(host)
+    mailbox.login(username, password)
+    msg = MIMEText(message)
+    msg['Subject'] = subject
+    msg['From'] = username
+    msg['To'] = ', '.join(recipients)
+    mailbox.sendmail(sender or username, recipients, msg.as_string())
+    mailbox.quit()
 
 
 def stderr_it(msg, end=u'\n', flush=True):

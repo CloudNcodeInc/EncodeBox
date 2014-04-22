@@ -117,7 +117,7 @@ call_hook(u'pre_' + action)
 
 setup(
     name=u'encodebox',
-    version=u'0.8.1-beta',
+    version=u'0.9.0-beta',
     packages=find_packages(exclude=[u'tests']),
     description=u'Transcoding watchfolder called EncodeBox',
     long_description=open(u'README.rst', u'r', encoding=u'utf-8').read(),
@@ -129,7 +129,7 @@ setup(
     keywords=[u'ffmpeg', u'json', u'rsync'],
     include_package_data=True,
     install_requires=[str(requirement.req) for requirement in parse_requirements(u'requirements.txt')],
-    data_files=[(u'/etc/encodebox', [u'etc/hd.smil', u'etc/sd.smil'])],
+    data_files=[(u'/etc/encodebox', [u'etc/email_body.j2', u'etc/hd.smil', u'etc/sd.smil'])],
     entry_points={u'console_scripts': [u'encodebox=encodebox.daemon:main']},
     tests_require=['coverage', 'mock', 'nose'],
     test_suite=u'tests.encodebox_runtests.main', **kwargs)

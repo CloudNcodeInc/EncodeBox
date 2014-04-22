@@ -26,7 +26,7 @@ from subprocess import check_call
 
 from . import celeryconfig, states
 from .lib import generate_unguessable_filename, load_settings, move, passes_from_template, HD_HEIGHT
-from .tasks_lib import TranscodeProgressReport
+from .tasks_lib import TranscodeProgressReport, send_error_email
 
 configure_unicode()
 
@@ -137,8 +137,13 @@ def transcode(in_relpath_json):
             final_state = states.TRANSFER_ERROR
             with open(join(outputs_directory, u'transfer-error.log'), u'w', u'utf-8') as log:
                 log.write(repr(e))
-    except:
+    except Exception as e:
         logger.exception(u'Transcoding task failed')
+        try:
+            logger.info(u'Report the error by e-mail')
+            send_error_email(exception=e, filename=in_abspath, settings=settings)
+        except:
+            logger.exception(u'Unable to report the error by e-mail')
         logger.info(u'Move the input file to the failed directory and remove the outputs')
         if in_abspath and failed_abspath:
             move(in_abspath, failed_abspath)
