@@ -1,5 +1,6 @@
-api_auth: null
-api_url: http://127.0.0.1:5000/encoding/report
+api_servers:
+  - auth: null
+    url: http://127.0.0.1:5000/encoding/report
 completed_cleanup_delay: 604800
 email_body: /etc/encodebox/email_body.j2
 email_host: smtp.gmail.com

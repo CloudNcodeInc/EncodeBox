@@ -45,8 +45,7 @@ The settings file ``/etc/encodebox/config.yaml`` of EncodeBox permit to configur
 :remote_directory: (username@host_ip:/usr/local/WowzaStreamingEngine/content) The outputs are copied to this directory with rsync_. Can be remote or local.
 :remote_url: (http://host_ip:1935/vod/content/{publisher_id}/{product_id}/smil:{name}.smil/Manifest) The Wowza player use this kind of URL, so here is the template.
 :completed_cleanup_delay: (604800) Completed files are removed if older than this delay in seconds, default means 7 days.
-:api_url: (http://127.0.0.1:5000/encoding/report) Socket to POST (API) the progress reports of the transcoding tasks.
-:api_auth: (null) Credentials to POST (API) the progress report.
+:api_servers: ([url: http://127.0.0.1:5000/encoding/report, auth: null]) The progress reports of the transcoding tasks will be POST (API) to the given servers. Set to null to disable this feature.
 :email_body: (/etc/encodebox/email_body.j2) The template used to generate the body of the error report.
 :email_host: (smtp.gmail.com) The SMTP_ host to send the e-mail messages.
 :email_username: (encodebox.test@gmail.com) The username of the mailbox used to send the e-mail messages.

@@ -21,9 +21,8 @@ from .lib import send_email
 
 class TranscodeProgressReport(object):
 
-    def __init__(self, api_url, api_auth, publisher_id, product_id, filename, original_size, logger):
-        self.api_url = api_url
-        self.api_auth = api_auth
+    def __init__(self, api_servers, publisher_id, product_id, filename, original_size, logger):
+        self.api_servers = api_servers
         self.publisher_id = publisher_id
         self.product_id = product_id
         self.filename = filename
@@ -54,12 +53,15 @@ class TranscodeProgressReport(object):
                          pass_eta=secs_to_time(statistics.get(u'eta_time', 0)),
                          pass_fps=statistics.get(u'fps', 0)))
         try:
-            headers = {u'Content-type': u'application/json'}
-            requests.post(self.api_url, auth=self.api_auth, headers=headers, data=json.dumps({
-                u'elapsed': task_elapsed, u'eta': task_eta, u'filename': self.filename,
-                u'original_size': self.original_size, u'product_id': self.product_id, u'progress': task_progress,
-                u'publisher_id': self.publisher_id, u'status': state, u'url': url
-            }))
+            if self.api_servers:
+                headers = {u'Content-type': u'application/json'}
+                data = json.dumps({
+                    u'elapsed': task_elapsed, u'eta': task_eta, u'filename': self.filename,
+                    u'original_size': self.original_size, u'product_id': self.product_id, u'progress': task_progress,
+                    u'publisher_id': self.publisher_id, u'status': state, u'url': url
+                })
+                for api_server in self.api_servers:
+                    requests.post(api_server[u'url'], auth=api_server[u'auth'], headers=headers, data=data)
         except:
             self.logger.exception(u'Unable to report progress')
 
