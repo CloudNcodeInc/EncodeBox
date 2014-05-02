@@ -2,6 +2,6 @@ celery
 flask
 paramiko
 pyinotify
-pytoolbox>=8.0.0-beta
+pytoolbox>=8.0.3-beta
 requests
 sqlalchemy

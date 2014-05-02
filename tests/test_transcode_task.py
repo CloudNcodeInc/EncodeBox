@@ -64,9 +64,9 @@ class TestTranscodeTasks(object):
             open(in_abspath, 'w', 'utf-8').write('salut')
             try:
                 tasks.transcode(json.dumps(in_relpath))
-            except IOError as e:
-                if not 'detect resolution' in unicode(e):
-                    raise
+                raise ValueError(u'Transcoding task does not raised an exception.')
+            except RuntimeError:
+                pass
             ok_(exists(join(LOCAL_DIRECTORY, '1/1/failed/test.txt')))
             ok_(self.is_empty(join(LOCAL_DIRECTORY, '1/1/completed')))
             ok_(self.is_empty(join(LOCAL_DIRECTORY, '1/1/uploaded')))
