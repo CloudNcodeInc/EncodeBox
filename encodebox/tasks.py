@@ -16,11 +16,11 @@ from celery import Celery
 from celery.utils.log import get_task_logger
 from codecs import open
 from os.path import basename, exists, getsize, join, splitext
-from pytoolbox import ffmpeg, x264  # For the line with encoder_module to work!
 from pytoolbox.datetime import secs_to_time
 from pytoolbox.encoding import configure_unicode, to_bytes
-from pytoolbox.ffmpeg import get_media_resolution, HEIGHT
 from pytoolbox.filesystem import from_template, try_makedirs
+from pytoolbox.multimedia import ffmpeg, x264  # For the line with encoder_module to work!
+from pytoolbox.multimedia.ffprobe import get_media_resolution, HEIGHT
 from pytoolbox.subprocess import rsync
 from subprocess import check_call
 
