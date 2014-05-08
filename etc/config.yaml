@@ -13,123 +13,143 @@ hd_transcode_passes:
 - - ffmpeg
   - '{input}'
   - '{tmp}/a.wav'
-  - -analyzeduration 2147480000 -ar 48000 -ac 2
-- neroAacEnc -cbr 128000 -lc -if "{tmp}/a.wav" -of "{tmp}/a.mp4"
+  - '-analyzeduration 2147480000 -ar 48000 -ac 2'
+- 'neroAacEnc -cbr 64000 -lc -if "{tmp}/a.wav" -of "{tmp}/a.mp4"'
 - - ffmpeg
   - '{input}'
   - '{tmp}/v.y4m'
-  - -r 25 -s 854x480 -aspect 16:9 -f yuv4mpegpipe -pix_fmt yuv420p -vsync 1 -g 100
-    -keyint_min 100 -movflags frag_keyframe
+  - '-r 25 -vf "scale=1920x1080" -aspect 16:9 -f yuv4mpegpipe -pix_fmt yuv420p -vsync 1 -g 100 -keyint_min 100 -movflags frag_keyframe'
 - - x264
   - '{tmp}/v.y4m'
   - null
-  - --pass 1 --fps 25 --bitrate 2000 --no-scenecut --stats "{tmp}/x264pass.log"
+  - '--pass 1 --fps 25 --bitrate 2000 --preset slow --profile main --no-scenecut --stats "{tmp}/x264pass.log"'
 - - x264
   - '{tmp}/v.y4m'
   - '{tmp}/v.h264'
-  - --pass 2 --fps 25 --bitrate 2000 --no-scenecut --stats "{tmp}/x264pass.log"
+  - '--pass 2 --fps 25 --bitrate 2000 --preset slow --profile main --no-scenecut --stats "{tmp}/x264pass.log"'
 - - ffmpeg
-  - - '{tmp}/v.h264'
-    - '{tmp}/a.mp4'
+  - ['{tmp}/v.h264', '{tmp}/a.mp4']
   - '{out}/{name}_2000.mp4'
-  - -vcodec copy -acodec copy
+  - '-vcodec copy -acodec copy'
 - - ffmpeg
   - '{input}'
   - '{tmp}/v.y4m'
-  - -r 25 -s 480x272 -aspect 16:9 -f yuv4mpegpipe -pix_fmt yuv420p -vsync 1 -g 100
-    -keyint_min 100 -movflags frag_keyframe
+  - '-r 25 -vf "scale=1280:720" -aspect 16:9 -f yuv4mpegpipe -pix_fmt yuv420p -vsync 1 -g 100 -keyint_min 100 -movflags frag_keyframe'
 - - x264
   - '{tmp}/v.y4m'
   - null
-  - --pass 1 --fps 25 --bitrate 894 --no-scenecut --stats "{tmp}/x264pass.log"
+  - '--pass 1 --fps 25 --bitrate 1500 --preset slow --profile main --no-scenecut --stats "{tmp}/x264pass.log"'
 - - x264
   - '{tmp}/v.y4m'
   - '{tmp}/v.h264'
-  - --pass 2 --fps 25 --bitrate 894 --no-scenecut --stats "{tmp}/x264pass.log"
+  - '--pass 2 --fps 25 --bitrate 1500 --preset slow --profile main --no-scenecut --stats "{tmp}/x264pass.log"'
 - - ffmpeg
-  - - '{tmp}/v.h264'
-    - '{tmp}/a.mp4'
-  - '{out}/{name}_894.mp4'
-  - -vcodec copy -acodec copy
+  - ['{tmp}/v.h264', '{tmp}/a.mp4']
+  - '{out}/{name}_1500.mp4'
+  - '-vcodec copy -acodec copy'
 - - ffmpeg
   - '{input}'
   - '{tmp}/v.y4m'
-  - -r 25 -s 288x160 -aspect 16:9 -f yuv4mpegpipe -pix_fmt yuv420p -vsync 1 -g 100
-    -keyint_min 100 -movflags frag_keyframe
+  - '-r 25 -vf "scale=1024:576" -aspect 16:9 -f yuv4mpegpipe -pix_fmt yuv420p -vsync 1 -g 100 -keyint_min 100 -movflags frag_keyframe'
 - - x264
   - '{tmp}/v.y4m'
   - null
-  - --pass 1 --fps 25 --bitrate 400 --no-scenecut --stats "{tmp}/x264pass.log"
+  - '--pass 1 --fps 25 --bitrate 1200 --preset slow --profile main --no-scenecut --stats "{tmp}/x264pass.log"'
 - - x264
   - '{tmp}/v.y4m'
   - '{tmp}/v.h264'
-  - --pass 2 --fps 25 --bitrate 400 --no-scenecut --stats "{tmp}/x264pass.log"
+  - '--pass 2 --fps 25 --bitrate 1200 --preset slow --profile main --no-scenecut --stats "{tmp}/x264pass.log"'
 - - ffmpeg
-  - - '{tmp}/v.h264'
-    - '{tmp}/a.mp4'
+  - ['{tmp}/v.h264', '{tmp}/a.mp4']
+  - '{out}/{name}_1200.mp4'
+  - '-vcodec copy -acodec copy'
+- - ffmpeg
+  - '{input}'
+  - '{tmp}/v.y4m'
+  - '-r 25 -vf "scale=640:360" -aspect 16:9 -f yuv4mpegpipe -pix_fmt yuv420p -vsync 1 -g 100 -keyint_min 100 -movflags frag_keyframe'
+- - x264
+  - '{tmp}/v.y4m'
+  - null
+  - '--pass 1 --fps 25 --bitrate 900 --preset slow --profile main --no-scenecut --stats "{tmp}/x264pass.log"'
+- - x264
+  - '{tmp}/v.y4m'
+  - '{tmp}/v.h264'
+  - '--pass 2 --fps 25 --bitrate 900 --preset slow --profile main --no-scenecut --stats "{tmp}/x264pass.log"'
+- - ffmpeg
+  - ['{tmp}/v.h264', '{tmp}/a.mp4']
+  - '{out}/{name}_900.mp4'
+  - '-vcodec copy -acodec copy'
+- - ffmpeg
+  - '{input}'
+  - '{tmp}/v.y4m'
+  - '-r 25 -vf "scale=384:216" -aspect 16:9 -f yuv4mpegpipe -pix_fmt yuv420p -vsync 1 -g 100 -keyint_min 100 -movflags frag_keyframe'
+- - x264
+  - '{tmp}/v.y4m'
+  - null
+  - '--pass 1 --fps 25 --bitrate 400 --preset slow --profile main --no-scenecut --stats "{tmp}/x264pass.log"'
+- - x264
+  - '{tmp}/v.y4m'
+  - '{tmp}/v.h264'
+  - '--pass 2 --fps 25 --bitrate 400 --preset slow --profile main --no-scenecut --stats "{tmp}/x264pass.log"'
+- - ffmpeg
+  - ['{tmp}/v.h264', '{tmp}/a.mp4']
   - '{out}/{name}_400.mp4'
-  - -vcodec copy -acodec copy
+  - '-vcodec copy -acodec copy'
 local_directory: /var/www/data
 remote_directory: username@host_ip:/usr/local/WowzaStreamingEngine/content
-remote_url: http://host_ip:1935/vod/content/{publisher_id}/{product_id}/smil:{name}.smil/Manifest
+remote_url: 'http://host_ip:1935/vod/content/{publisher_id}/{product_id}/smil:{name}.smil/playlist.m3u8'
 sd_smil_template: /etc/encodebox/sd.smil
 sd_transcode_passes:
 - - ffmpeg
   - '{input}'
   - '{tmp}/a.wav'
-  - -analyzeduration 2147480000 -ar 48000 -ac 2
-- neroAacEnc -cbr 128000 -lc -if "{tmp}/a.wav" -of "{tmp}/a.mp4"
+  - '-analyzeduration 2147480000 -ar 48000 -ac 2'
+- 'neroAacEnc -cbr 32000 -lc -if "{tmp}/a.wav" -of "{tmp}/a.mp4"'
 - - ffmpeg
   - '{input}'
   - '{tmp}/v.y4m'
-  - -r 25 -s 854x480 -aspect 16:9 -f yuv4mpegpipe -pix_fmt yuv420p -vsync 1 -g 100
-    -keyint_min 100 -movflags frag_keyframe
+  - '-r 25 -vf "scale=896:504" -aspect 16:9 -f yuv4mpegpipe -pix_fmt yuv420p -vsync 1 -g 100 -keyint_min 100 -movflags frag_keyframe'
 - - x264
   - '{tmp}/v.y4m'
   - null
-  - --pass 1 --fps 25 --bitrate 2000 --no-scenecut --stats "{tmp}/x264pass.log"
+  - '--pass 1 --fps 25 --bitrate 1200 --preset slow --profile main --no-scenecut --stats "{tmp}/x264pass.log"'
 - - x264
   - '{tmp}/v.y4m'
   - '{tmp}/v.h264'
-  - --pass 2 --fps 25 --bitrate 2000 --no-scenecut --stats "{tmp}/x264pass.log"
+  - '--pass 2 --fps 25 --bitrate 1200 --preset slow --profile main --no-scenecut --stats "{tmp}/x264pass.log"'
 - - ffmpeg
-  - - '{tmp}/v.h264'
-    - '{tmp}/a.mp4'
-  - '{out}/{name}_2000.mp4'
-  - -vcodec copy -acodec copy
+  - ['{tmp}/v.h264', '{tmp}/a.mp4']
+  - '{out}/{name}_1200.mp4'
+  - '-vcodec copy -acodec copy'
 - - ffmpeg
   - '{input}'
   - '{tmp}/v.y4m'
-  - -r 25 -s 480x272 -aspect 16:9 -f yuv4mpegpipe -pix_fmt yuv420p -vsync 1 -g 100
-    -keyint_min 100 -movflags frag_keyframe
+  - '-r 25 -vf "scale=640:360" -aspect 16:9 -f yuv4mpegpipe -pix_fmt yuv420p -vsync 1 -g 100 -keyint_min 100 -movflags frag_keyframe'
 - - x264
   - '{tmp}/v.y4m'
   - null
-  - --pass 1 --fps 25 --bitrate 894 --no-scenecut --stats "{tmp}/x264pass.log"
+  - '--pass 1 --fps 25 --bitrate 900 --preset slow --profile main --no-scenecut --stats "{tmp}/x264pass.log"'
 - - x264
   - '{tmp}/v.y4m'
   - '{tmp}/v.h264'
-  - --pass 2 --fps 25 --bitrate 894 --no-scenecut --stats "{tmp}/x264pass.log"
+  - '--pass 2 --fps 25 --bitrate 900 --preset slow --profile main --no-scenecut --stats "{tmp}/x264pass.log"'
 - - ffmpeg
-  - - '{tmp}/v.h264'
-    - '{tmp}/a.mp4'
-  - '{out}/{name}_894.mp4'
-  - -vcodec copy -acodec copy
+  - ['{tmp}/v.h264', '{tmp}/a.mp4']
+  - '{out}/{name}_900.mp4'
+  - '-vcodec copy -acodec copy'
 - - ffmpeg
   - '{input}'
   - '{tmp}/v.y4m'
-  - -r 25 -s 288x160 -aspect 16:9 -f yuv4mpegpipe -pix_fmt yuv420p -vsync 1 -g 100
-    -keyint_min 100 -movflags frag_keyframe
+  - '-r 25 -vf "scale=384:216" -aspect 16:9 -f yuv4mpegpipe -pix_fmt yuv420p -vsync 1 -g 100 -keyint_min 100 -movflags frag_keyframe'
 - - x264
   - '{tmp}/v.y4m'
   - null
-  - --pass 1 --fps 25 --bitrate 400 --no-scenecut --stats "{tmp}/x264pass.log"
+  - '--pass 1 --fps 25 --bitrate 400 --preset slow --profile main --no-scenecut --stats "{tmp}/x264pass.log"'
 - - x264
   - '{tmp}/v.y4m'
   - '{tmp}/v.h264'
-  - --pass 2 --fps 25 --bitrate 400 --no-scenecut --stats "{tmp}/x264pass.log"
+  - '--pass 2 --fps 25 --bitrate 400 --preset slow --profile main --no-scenecut --stats "{tmp}/x264pass.log"'
 - - ffmpeg
-  - - '{tmp}/v.h264'
-    - '{tmp}/a.mp4'
+  - ['{tmp}/v.h264', '{tmp}/a.mp4']
   - '{out}/{name}_400.mp4'
-  - -vcodec copy -acodec copy
+  - '-vcodec copy -acodec copy'
