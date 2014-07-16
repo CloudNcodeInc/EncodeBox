@@ -173,10 +173,10 @@ def cleanup():
         delay = settings[u'completed_cleanup_delay']
         max_mtime = time.time() - delay
         removed = set()
-        for root, dirnames, filenames in os.walk(settings[u'local_directory']):
+        for dirpath, dirnames, filenames in os.walk(settings[u'local_directory']):
             if basename(root) == u'completed':
                 for filename in filenames:
-                    filename = join(root, filename)
+                    filename = join(dirpath, filename)
                     if os.stat(filename).st_mtime < max_mtime:
                         logger.info(u'Remove file older than {0} {1}'.format(secs_to_time(delay), filename))
                         os.remove(filename)
