@@ -1,5 +1,5 @@
 #!/usr/bin/env python
-# -*- coding: utf-8 -*-
+# -*- encoding: utf-8 -*-
 
 # Transcoding watchfolder called EncodeBox
 # Retrieved from git clone https://bitbucket.org/cloudncode/encodebox.git

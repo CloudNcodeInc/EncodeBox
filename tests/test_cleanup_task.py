@@ -1,4 +1,4 @@
-# -*- coding: utf-8 -*-
+# -*- encoding: utf-8 -*-
 
 # Base Application of the CloudNcode SaaS Transcoding Platform
 # Retrieved from https://bitbucket.org/cloudncode/cloudncode.git
