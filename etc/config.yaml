@@ -4,9 +4,9 @@ api_servers:
 completed_cleanup_delay: 604800
 email_body: /etc/encodebox/email_body.j2
 email_host: smtp.gmail.com
-email_password: 1kLRy0LUlZ1HQFde
-email_recipients: ['aaron@sigalamedia.com', 'david.fischer.ch@gmail.com']
-email_username: encodebox.test@gmail.com
+email_password: 1234****
+email_recipients: ['some-user-account@example.com']
+email_username: some-it-account@gmail.com
 filenames_seed: 499Qm1NKiZmYYE5Q
 hd_smil_template: /etc/encodebox/hd.smil
 hd_transcode_passes:
